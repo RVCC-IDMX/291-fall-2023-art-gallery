@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/RVCC-IDMX/291-fall-2023-art-gallery/issues"
   },
-  "homepage": "https://github.com/RVCC-IDMX/291-fall-2023-art-gallery#readme"
+  "homepage": "https://github.com/RVCC-IDMX/291-fall-2023-art-gallery#readme",
+  "dependencies": {
+    "pixi.js": "^7.3.2"
+  }
 }
