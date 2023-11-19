@@ -4,7 +4,139 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
     <script type="module" src="./index.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
   </head>
-  <body></body>
+  <body>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+    </style>
+    <script>
+      const horizontalPadding = 50;
+      const verticalPadding = 50;
+      mainBackgroundColor = 0x000000;
+      const boxColor = 0x888888;
+      //The App
+      const app = new PIXI.Application({
+        width: 1920,
+        height: 1080,
+        backgroundColor: mainBackgroundColor,
+      });
+
+      // app.resizeTo = window;
+      //Fix, or at least improve blurry text
+      PIXI.settings.ROUND_PIXELS = true;
+      const stage = app.stage;
+      const view = app.view;
+
+      //Add view to the document
+      document.body.appendChild(app.view);
+
+      const artistProfile = new PIXI.Container();
+      const carouselMaskLeft = new PIXI.Graphics();
+      const carouselMaskRight = new PIXI.Graphics();
+      carouselMaskLeft.beginFill(mainBackgroundColor);
+      carouselMaskLeft.drawRect(0, app.view.height / 2, 250, app.view.height);
+      carouselMaskRight.beginFill(mainBackgroundColor);
+      carouselMaskRight.drawRect(
+        app.view.width - 250,
+        app.view.height / 2,
+        250,
+        app.view.height
+      );
+
+      const artistPhoto = new PIXI.Graphics();
+      artistPhoto.beginFill(boxColor);
+      artistPhoto.drawRect(0, 0, 450, 650);
+
+      // Anchoring to the top left of the screen
+      artistPhoto.x = horizontalPadding;
+      artistPhoto.y = verticalPadding;
+
+      const infoBox = new PIXI.Container();
+      const infoBoxBackground = new PIXI.Graphics();
+      infoBoxBackground.beginFill(boxColor);
+      infoBoxBackground.drawRect(0, 0, 1300, 650);
+      const artistName = new PIXI.Container();
+      const artistQRCode = new PIXI.Container();
+      const artistDescription = new PIXI.Container();
+
+      infoBox.addChild(infoBoxBackground);
+      infoBox.addChild(artistName);
+      infoBox.addChild(artistQRCode);
+      infoBox.addChild(artistDescription);
+
+      // Anchoring to the top right of the screen
+      infoBox.x = app.view.width - infoBox.width - horizontalPadding;
+      infoBox.y = verticalPadding;
+
+      const imageGallery = new PIXI.Container();
+
+      const images = [];
+      for (let i = 0; i < 20; i += 1) {
+        imageGallery.addChild(new PIXI.Graphics());
+      }
+      let imageCount = 0;
+      imageGallery.children.forEach((image) => {
+        image.beginFill(boxColor);
+        image.drawRect(0, 0, 150, 250);
+        if (imageCount > 0) {
+          image.x = imageGallery.children[imageCount - 1].x + image.width + 50;
+        }
+        imageCount += 1;
+      });
+      // Anchoring to the bottom left of the screen with extra padding to allow for a back button
+      // imageGallery.x = app.view.width / 2;
+      imageGallery.x = horizontalPadding + 200;
+      imageGallery.y = app.view.height - imageGallery.height - verticalPadding;
+
+      // Making the gallery click+draggable horizontally
+      imageGallery.interactive = true;
+      imageGallery.dragging = false;
+      imageGallery.on("pointerdown", (e) => {
+        imageGallery.offsetX = imageGallery.x - e.global.x;
+        imageGallery.offsetY = imageGallery.y - e.global.y;
+        imageGallery.dragging = true;
+        // console.log(e);
+      });
+      imageGallery.on("pointermove", (e) => {
+        if (imageGallery.dragging) {
+          imageGallery.x = e.global.x + imageGallery.offsetX;
+          //Check constraints
+          if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
+            imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
+          }
+          if (imageGallery.x > 0.75 * app.view.width) {
+            imageGallery.x = 0.75 * app.view.width;
+          }
+
+          // if (slide.x < 0) slide.x = 0;
+          // Check value
+          // this.value = slide.x / track.width;
+        }
+      });
+
+      imageGallery.on("pointerup", (e) => {
+        imageGallery.dragging = false;
+      });
+      imageGallery.on("pointerupoutside", (e) => {
+        imageGallery.dragging = false;
+      });
+
+      artistProfile.addChild(imageGallery);
+      artistProfile.addChild(carouselMaskLeft);
+      artistProfile.addChild(carouselMaskRight);
+      artistProfile.addChild(artistPhoto);
+      artistProfile.addChild(infoBox);
+      //This should probably be done through the director later.
+      app.stage.addChild(artistProfile);
+    </script>
+  </body>
 </html>
