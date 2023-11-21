@@ -21,13 +21,13 @@
     <script>
       const horizontalPadding = 50;
       const verticalPadding = 50;
-      mainBackgroundColor = 0x000000;
-      const boxColor = 0x888888;
+      mainBackgroundColor = 0xffffff;
+      const boxColor = 0x555555;
       //The App
       const app = new PIXI.Application({
         width: 1920,
         height: 1080,
-        backgroundColor: mainBackgroundColor,
+        backgroundColor: 0xffffff,
       });
 
       // app.resizeTo = window;
@@ -104,17 +104,17 @@
         imageGallery.offsetX = imageGallery.x - e.global.x;
         imageGallery.offsetY = imageGallery.y - e.global.y;
         imageGallery.dragging = true;
-        // console.log(e);
       });
       imageGallery.on("pointermove", (e) => {
         if (imageGallery.dragging) {
           imageGallery.x = e.global.x + imageGallery.offsetX;
           //Check constraints
           if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
+            //Right limit
             imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
-          }
-          if (imageGallery.x > 0.75 * app.view.width) {
-            imageGallery.x = 0.75 * app.view.width;
+          } else if (imageGallery.x > 0.25 * app.view.width) {
+            //Left limit
+            imageGallery.x = 0.25 * app.view.width;
           }
 
           // if (slide.x < 0) slide.x = 0;
