@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +9,7 @@
     <!-- <script type="text/javascript" src="./artists.json"></script> -->
     <script type="module" src="./index.js"></script>
   </head>
+
   <body>
     <style>
       *,
@@ -19,6 +21,8 @@
       }
     </style>
     <script defer>
+
+
       const horizontalPadding = 50;
       const verticalPadding = 50;
       mainBackgroundColor = 0xffffff;
@@ -40,6 +44,8 @@
       document.body.appendChild(app.view);
 
       const artistProfile = new PIXI.Container();
+      // Addign the view here for the moment. Might help with loading problems.
+      app.stage.addChild(artistProfile);
       const carouselMaskLeft = new PIXI.Graphics();
       const carouselMaskRight = new PIXI.Graphics();
       carouselMaskLeft.beginFill(mainBackgroundColor);
@@ -116,62 +122,46 @@
       infoBox.y = verticalPadding;
 
       const imageGallery = new PIXI.Container();
-      const imageGalleryPlaceholder = new PIXI.Graphics();
-      imageGallery.addChild(imageGalleryPlaceholder);
-      imageGalleryPlaceholder.beginFill(boxColor);
-      imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
 
-      const images = [
-        "./img/gallery/mountains.jpg",
-        "./img/gallery/prism.jpg",
-        "./img/gallery/wind.jpg",
-        "./img/gallery/dog.jpg",
-        "./img/gallery/trees.jpg",
-      ];
-      // images.forEach((image) => PIXI.Assets.load(image));
-      let imageCount = 0;
-      images.forEach(async (path) => {
-        const sprite = new PIXI.Sprite(await PIXI.Assets.load(path));
-        // sprite.texture.baseTexture.on("loaded", () => {
-        sprite.height = 250;
-        sprite.width = (250 / sprite.texture.baseTexture.height) * sprite.width;
-        imageGallery.addChild(sprite);
-        if (imageCount > 0) {
-          sprite.x =
-            imageGallery.children[imageCount - 1].x +
-            imageGallery.children[imageCount - 1].width +
-            sprite.width;
-        } else {
-          sprite.x = 0;
-        }
-        imageCount += 1;
-        // Maybe try drawing placeholder rectangles behind each image to pre-allocate space for them
 
-        // });
-      });
 
-      // for (let i = 0; i < imageGallery.children.length; i += 1) {
-      //   if (i > 0) {
-      //     imageGallery.children[i].x =
-      //       imageGallery.children[i - 1].x +
-      //       imageGallery.children[i].width +
-      //       50;
-      //   }
-      // }
-      // imageGallery.children.forEach((image) => {});
-      // for (let i = 0; i < 20; i += 1) {
-      //   // Adding some placeholder rectangles
-      //   imageGallery.addChild(new PIXI.Graphics());
-      // }
 
-      // console.log(imageGallery.children);
-      imageGallery.children.forEach((image) => {
-        // // // drawing the placeholder rectangles
-        // image.beginFill(boxColor);
-        // image.drawRect(0, 0, 150, 250);
-      });
+      async function generateGallery() {
+        // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently. 
+        const imageGalleryPlaceholder = new PIXI.Graphics();
+        imageGallery.addChild(imageGalleryPlaceholder);
+        imageGalleryPlaceholder.beginFill(boxColor);
+        imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
+        const images = [
+          "./img/gallery/mountains.jpg",
+          "./img/gallery/prism.jpg",
+          "./img/gallery/wind.jpg",
+          "./img/gallery/dog.jpg",
+          "./img/gallery/trees.jpg",
+        ];
+        await PIXI.Assets.load(images).then(() => {
+          imageGallery.children.pop(0);
+          // This way to make this work seems pretty cursed, but whatever. 
+          let count = 0;
+          images.forEach(async (path) => {
+            const texture = await PIXI.Assets.load(path);
+            const sprite = await new PIXI.Sprite(texture);
+            sprite.height = 250;
+            sprite.width = (250 / sprite.texture.baseTexture.height) * sprite.width;
+            imageGallery.addChild(sprite);
+            if (count != 0) {
+              sprite.x = imageGallery.children[count - 1].x + imageGallery.children[count - 1].width + 50;
+            } else {
+              sprite.x = 0;
+            }
+
+            count += 1;
+          });
+
+        });
+      }
+      generateGallery();
       // Anchoring to the bottom left of the screen with extra padding to allow for a back button
-      // imageGallery.x = app.view.width / 2;
       imageGallery.x = horizontalPadding + 200;
       imageGallery.y = app.view.height - imageGallery.height - verticalPadding;
 
@@ -179,21 +169,28 @@
       imageGallery.interactive = true;
       imageGallery.dragging = false;
       imageGallery.on("pointerdown", (e) => {
+        imageGallery.calculateBounds();
         imageGallery.offsetX = imageGallery.x - e.global.x;
         imageGallery.offsetY = imageGallery.y - e.global.y;
         imageGallery.dragging = true;
       });
       imageGallery.on("pointermove", (e) => {
         if (imageGallery.dragging) {
+
           imageGallery.x = e.global.x + imageGallery.offsetX;
           //Check constraints
-          if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
-            //Right limit
-            imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
-          } else if (imageGallery.x > 0.25 * app.view.width) {
-            //Left limit
-            imageGallery.x = 0.25 * app.view.width;
+          if (imageGallery.width > .75 * app.view.width) {
+            if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
+              //Right limit
+              imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
+            } else if (imageGallery.x > 0.25 * app.view.width) {
+              //Left limit
+              imageGallery.x = 0.25 * app.view.width;
+            }
+          } else {
+            imageGallery.x = horizontalPadding + 200;
           }
+
 
           // if (slide.x < 0) slide.x = 0;
           // Check value
@@ -214,7 +211,8 @@
       artistProfile.addChild(artistPhoto);
       artistProfile.addChild(infoBox);
       //This should probably be done through the director later.
-      app.stage.addChild(artistProfile);
+
     </script>
   </body>
+
 </html>
