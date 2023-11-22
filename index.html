@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
+    <!-- <script type="text/javascript" src="./artists.json"></script> -->
     <script type="module" src="./index.js"></script>
-    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
   </head>
   <body>
     <style>
@@ -18,7 +18,7 @@
         box-sizing: border-box;
       }
     </style>
-    <script>
+    <script defer>
       const horizontalPadding = 50;
       const verticalPadding = 50;
       mainBackgroundColor = 0xffffff;
@@ -64,12 +64,50 @@
       const infoBoxBackground = new PIXI.Graphics();
       infoBoxBackground.beginFill(boxColor);
       infoBoxBackground.drawRect(0, 0, 1300, 650);
-      const artistName = new PIXI.Container();
+      const artistName = new PIXI.Text("Isabella Rivera", {
+        fontFamily: "sans-serif",
+        fontWeight: "bold",
+        fontSize: 32,
+        fill: 0x000000,
+      });
+      const artistLocation = new PIXI.Text("New York City, USA", {
+        fontFamily: "sans-serif",
+        fontWeight: "bold",
+        fontSize: 32,
+        fill: 0x000000,
+      });
+      const artistMedium = new PIXI.Text("Oil painting", {
+        fontFamily: "sans-serif",
+        fontWeight: "bold",
+        fontSize: 32,
+        fill: 0x000000,
+      });
+
       const artistQRCode = new PIXI.Container();
-      const artistDescription = new PIXI.Container();
+      const artistDescription = new PIXI.Text(
+        "Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
+        {
+          fontFamily: "sans-serif",
+          fontWeight: "bold",
+          wordWrap: true,
+          wordWrapWidth: 800,
+          fontSize: 32,
+          fill: 0x000000,
+        }
+      );
+      artistName.x = 50;
+      artistName.y = 50;
+      artistLocation.x = 50;
+      artistLocation.y = 100;
+      artistMedium.x = 50;
+      artistMedium.y = 150;
+      artistDescription.x = 400;
+      artistDescription.y = 50;
 
       infoBox.addChild(infoBoxBackground);
       infoBox.addChild(artistName);
+      infoBox.addChild(artistLocation);
+      infoBox.addChild(artistMedium);
       infoBox.addChild(artistQRCode);
       infoBox.addChild(artistDescription);
 
@@ -78,19 +116,59 @@
       infoBox.y = verticalPadding;
 
       const imageGallery = new PIXI.Container();
+      const imageGalleryPlaceholder = new PIXI.Graphics();
+      imageGallery.addChild(imageGalleryPlaceholder);
+      imageGalleryPlaceholder.beginFill(boxColor);
+      imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
 
-      const images = [];
-      for (let i = 0; i < 20; i += 1) {
-        imageGallery.addChild(new PIXI.Graphics());
-      }
+      const images = [
+        "./img/gallery/mountains.jpg",
+        "./img/gallery/prism.jpg",
+        "./img/gallery/wind.jpg",
+        "./img/gallery/dog.jpg",
+        "./img/gallery/trees.jpg",
+      ];
+      // images.forEach((image) => PIXI.Assets.load(image));
       let imageCount = 0;
-      imageGallery.children.forEach((image) => {
-        image.beginFill(boxColor);
-        image.drawRect(0, 0, 150, 250);
+      images.forEach(async (path) => {
+        const sprite = new PIXI.Sprite(await PIXI.Assets.load(path));
+        // sprite.texture.baseTexture.on("loaded", () => {
+        sprite.height = 250;
+        sprite.width = (250 / sprite.texture.baseTexture.height) * sprite.width;
+        imageGallery.addChild(sprite);
         if (imageCount > 0) {
-          image.x = imageGallery.children[imageCount - 1].x + image.width + 50;
+          sprite.x =
+            imageGallery.children[imageCount - 1].x +
+            imageGallery.children[imageCount - 1].width +
+            sprite.width;
+        } else {
+          sprite.x = 0;
         }
         imageCount += 1;
+        // Maybe try drawing placeholder rectangles behind each image to pre-allocate space for them
+
+        // });
+      });
+
+      // for (let i = 0; i < imageGallery.children.length; i += 1) {
+      //   if (i > 0) {
+      //     imageGallery.children[i].x =
+      //       imageGallery.children[i - 1].x +
+      //       imageGallery.children[i].width +
+      //       50;
+      //   }
+      // }
+      // imageGallery.children.forEach((image) => {});
+      // for (let i = 0; i < 20; i += 1) {
+      //   // Adding some placeholder rectangles
+      //   imageGallery.addChild(new PIXI.Graphics());
+      // }
+
+      // console.log(imageGallery.children);
+      imageGallery.children.forEach((image) => {
+        // // // drawing the placeholder rectangles
+        // image.beginFill(boxColor);
+        // image.drawRect(0, 0, 150, 250);
       });
       // Anchoring to the bottom left of the screen with extra padding to allow for a back button
       // imageGallery.x = app.view.width / 2;
