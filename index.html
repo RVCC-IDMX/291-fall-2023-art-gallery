@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,8 +20,6 @@
       }
     </style>
     <script defer>
-
-
       const horizontalPadding = 50;
       const verticalPadding = 50;
       mainBackgroundColor = 0xffffff;
@@ -43,14 +40,38 @@
       //Add view to the document
       document.body.appendChild(app.view);
 
-      const artistProfile = new PIXI.Container();
-      app.stage.addChild(artistProfile);
+      // Some temporary data to start creating model
+      const artist = {
+        name: 'Isabella Rivera',
+        location: 'New York City, USA',
+        medium: 'Oil painting',
+        description:
+          "    Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. \n    Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
+        headshotPath: './img/headshots/headshot.jpg',
+        galleryImages: [
+          './img/gallery/mountains.jpg',
+          './img/gallery/prism.jpg',
+          './img/gallery/wind.jpg',
+          './img/gallery/dog.jpg',
+          './img/gallery/trees.jpg',
+          './img/gallery/abstract.jpg',
+        ],
+      };
 
+      // Create containers for the two main view components
+      const artistProfile = new PIXI.Container();
+      const imageGallery = new PIXI.Container();
+      app.stage.addChild(artistProfile);
 
       const carouselMaskLeft = new PIXI.Graphics();
       const carouselMaskRight = new PIXI.Graphics();
       carouselMaskLeft.beginFill(mainBackgroundColor);
-      carouselMaskLeft.drawRect(0, app.view.height - 250 - verticalPadding, 250, 250);
+      carouselMaskLeft.drawRect(
+        0,
+        app.view.height - 250 - verticalPadding,
+        250,
+        250
+      );
       carouselMaskRight.beginFill(mainBackgroundColor);
       carouselMaskRight.drawRect(
         app.view.width - 250,
@@ -59,143 +80,162 @@
         250
       );
 
-      async function buildArtistProfile() {
-        PIXI.Assets.load("./img/headshots/headshot.jpg").then(async () => {
-          const texture = await PIXI.Assets.load("./img/headshots/headshot.jpg");
-          const artistPhoto = await new PIXI.Sprite(texture);
+      async function buildArtistProfile(
+        name,
+        location,
+        medium,
+        description,
+        headshotPath
+      ) {
+        PIXI.Assets.load(headshotPath)
+          .then(async () => {
+            const texture = await PIXI.Assets.load(headshotPath);
+            const artistPhoto = await new PIXI.Sprite(texture);
 
-          //Adding rectangles to crop photo to uniform dimensions of 650X450
-          const leftCrop = new PIXI.Graphics();
-          const rightCrop = new PIXI.Graphics();
+            //Adding rectangles to crop photo to uniform dimensions of 650X450
+            const leftCrop = new PIXI.Graphics();
+            const rightCrop = new PIXI.Graphics();
 
-          artistPhoto.height = 650;
-          artistPhoto.width = (650 / artistPhoto.texture.baseTexture.height) * artistPhoto.width;
-          artistPhoto.x = horizontalPadding;
-          artistPhoto.y = verticalPadding;
-          artistProfile.addChild(artistPhoto);
-          artistProfile.addChild(leftCrop);
-          artistProfile.addChild(rightCrop);
-          leftCrop.beginFill(mainBackgroundColor);
-          rightCrop.beginFill(mainBackgroundColor);
-          leftCrop.drawRect(horizontalPadding, verticalPadding, Math.abs(artistPhoto.width - 450) / 2, 650);
-          rightCrop.drawRect(horizontalPadding + artistPhoto.width - Math.abs(artistPhoto.width - 450) / 2, verticalPadding, Math.abs(artistPhoto.width - 450) / 2, 650);
-          // leftCrop.x -= (artistPhoto.width - leftCrop.width);
-        }).then(() => {
-          const infoBox = new PIXI.Container();
-          const infoBoxPadding = 50;
-          const infoBoxElementSpacing = 10;
-          const infoBoxBackground = new PIXI.Graphics();
-          infoBoxBackground.beginFill(mainBackgroundColor);
-          infoBoxBackground.drawRect(0, 0, 1300, 650);
-          const artistName = new PIXI.Text("Isabella Rivera", {
-            fontFamily: "sans-serif",
-            fontWeight: "bold",
-            fontSize: 32,
-            fill: 0x000000,
-          });
-          const artistLocation = new PIXI.Text("New York City, USA", {
-            fontFamily: "sans-serif",
-            fontSize: 26,
-            fill: 0x000000,
-          });
-          const artistMedium = new PIXI.Text("Oil painting", {
-            fontFamily: "sans-serif",
-            fontSize: 26,
-            fill: 0x000000,
-          });
-
-          const artistQRCode = new PIXI.Graphics();
-          artistQRCode.beginFill(0x000000);
-          artistQRCode.drawRect(0, 0, 300, 300);
-
-          const artistDescription = new PIXI.Text(
-            "    Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. \n    Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
-            {
-              fontFamily: "sans-serif",
-              lineHeight: 35,
-              wordWrap: true,
-              wordWrapWidth: infoBoxBackground.width * 2 / 3 - infoBoxPadding,
+            artistPhoto.height = 650;
+            artistPhoto.width =
+              (650 / artistPhoto.texture.baseTexture.height) *
+              artistPhoto.width;
+            artistPhoto.x = horizontalPadding;
+            artistPhoto.y = verticalPadding;
+            artistProfile.addChild(artistPhoto);
+            artistProfile.addChild(leftCrop);
+            artistProfile.addChild(rightCrop);
+            leftCrop.beginFill(mainBackgroundColor);
+            rightCrop.beginFill(mainBackgroundColor);
+            leftCrop.drawRect(
+              horizontalPadding,
+              verticalPadding,
+              Math.abs(artistPhoto.width - 450) / 2,
+              650
+            );
+            rightCrop.drawRect(
+              horizontalPadding +
+                artistPhoto.width -
+                Math.abs(artistPhoto.width - 450) / 2,
+              verticalPadding,
+              Math.abs(artistPhoto.width - 450) / 2,
+              650
+            );
+            // leftCrop.x -= (artistPhoto.width - leftCrop.width);
+          })
+          .then(() => {
+            const infoBox = new PIXI.Container();
+            const infoBoxPadding = 50;
+            const infoBoxElementSpacing = 10;
+            const infoBoxBackground = new PIXI.Graphics();
+            infoBoxBackground.beginFill(mainBackgroundColor);
+            infoBoxBackground.drawRect(0, 0, 1300, 650);
+            const artistName = new PIXI.Text(name, {
+              fontFamily: 'sans-serif',
+              fontWeight: 'bold',
+              fontSize: 32,
+              fill: 0x000000,
+            });
+            const artistLocation = new PIXI.Text(location, {
+              fontFamily: 'sans-serif',
               fontSize: 26,
               fill: 0x000000,
-            }
-          );
+            });
+            const artistMedium = new PIXI.Text(medium, {
+              fontFamily: 'sans-serif',
+              fontSize: 26,
+              fill: 0x000000,
+            });
 
+            const artistQRCode = new PIXI.Graphics();
+            artistQRCode.beginFill(0x000000);
+            artistQRCode.drawRect(0, 0, 300, 300);
 
-          infoBox.addChild(infoBoxBackground);
-          infoBox.addChild(artistName);
-          infoBox.addChild(artistLocation);
-          infoBox.addChild(artistMedium);
-          infoBox.addChild(artistQRCode);
-          infoBox.addChild(artistDescription);
+            const artistDescription = new PIXI.Text(description, {
+              fontFamily: 'sans-serif',
+              lineHeight: 35,
+              wordWrap: true,
+              wordWrapWidth: (infoBoxBackground.width * 2) / 3 - infoBoxPadding,
+              fontSize: 26,
+              fill: 0x000000,
+            });
 
-          artistName.x = infoBoxPadding;
-          artistName.y = infoBoxPadding;
-          artistLocation.x = infoBoxPadding;
-          artistLocation.y = artistName.y + artistName.height / 2 + artistLocation.height + infoBoxElementSpacing;
-          artistMedium.x = infoBoxPadding;
-          artistMedium.y = artistLocation.y + artistMedium.height + infoBoxElementSpacing;
-          artistQRCode.x = infoBoxPadding;
-          artistQRCode.y = artistMedium.y + artistMedium.height + 2 * infoBoxElementSpacing;
-          artistDescription.x = infoBoxBackground.width / 3 - infoBoxPadding;
-          artistDescription.y = infoBoxPadding;
+            infoBox.addChild(infoBoxBackground);
+            infoBox.addChild(artistName);
+            infoBox.addChild(artistLocation);
+            infoBox.addChild(artistMedium);
+            infoBox.addChild(artistQRCode);
+            infoBox.addChild(artistDescription);
 
-          // Anchoring to the top right of the screen
-          infoBox.x = app.view.width - infoBox.width - horizontalPadding;
-          infoBox.y = verticalPadding;
-          artistProfile.addChild(infoBox);
-        });
+            artistName.x = infoBoxPadding;
+            artistName.y = infoBoxPadding;
+            artistLocation.x = infoBoxPadding;
+            artistLocation.y =
+              artistName.y +
+              artistName.height / 2 +
+              artistLocation.height +
+              infoBoxElementSpacing;
+            artistMedium.x = infoBoxPadding;
+            artistMedium.y =
+              artistLocation.y + artistMedium.height + infoBoxElementSpacing;
+            artistQRCode.x = infoBoxPadding;
+            artistQRCode.y =
+              artistMedium.y + artistMedium.height + 2 * infoBoxElementSpacing;
+            artistDescription.x = infoBoxBackground.width / 3 - infoBoxPadding;
+            artistDescription.y = infoBoxPadding;
 
+            // Anchoring to the top right of the screen
+            infoBox.x = app.view.width - infoBox.width - horizontalPadding;
+            infoBox.y = verticalPadding;
+            artistProfile.addChild(infoBox);
+          })
+          .then(() => {});
       }
 
-
-
-
-      const imageGallery = new PIXI.Container();
-
-
-
-
-      async function buildGallery() {
-        // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently. 
+      async function buildGallery(images) {
+        // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
         const imageGalleryPlaceholder = new PIXI.Graphics();
         imageGallery.addChild(imageGalleryPlaceholder);
         imageGalleryPlaceholder.beginFill(boxColor);
         imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
-        const images = [
-          "./img/gallery/mountains.jpg",
-          "./img/gallery/prism.jpg",
-          "./img/gallery/wind.jpg",
-          "./img/gallery/dog.jpg",
-          "./img/gallery/trees.jpg",
-          "./img/gallery/abstract.jpg"
-        ];
-        await PIXI.Assets.load(images).then(() => {
-          imageGallery.children.pop(0);
-          // This way to make this work seems pretty cursed, but whatever. 
-          let count = 0;
-          images.forEach(async (path) => {
-            const texture = await PIXI.Assets.load(path);
-            const sprite = await new PIXI.Sprite(texture);
-            sprite.height = 250;
-            sprite.width = (250 / sprite.texture.baseTexture.height) * sprite.width;
-            imageGallery.addChild(sprite);
-            if (count != 0) {
-              sprite.x = imageGallery.children[count - 1].x + imageGallery.children[count - 1].width + 50;
-            } else {
-              sprite.x = 0;
-            }
+        await PIXI.Assets.load(images)
+          .then(() => {
+            imageGallery.children.pop(0);
+            // This way to make this work seems pretty cursed, but whatever.
+            let count = 0;
+            images.forEach(async (path) => {
+              const texture = await PIXI.Assets.load(path);
+              const sprite = await new PIXI.Sprite(texture);
+              sprite.height = 250;
+              sprite.width =
+                (250 / sprite.texture.baseTexture.height) * sprite.width;
+              imageGallery.addChild(sprite);
+              if (count != 0) {
+                sprite.x =
+                  imageGallery.children[count - 1].x +
+                  imageGallery.children[count - 1].width +
+                  50;
+              } else {
+                sprite.x = 0;
+              }
 
-            count += 1;
+              count += 1;
+            });
+          })
+          .then(() => {
+            artistProfile.addChild(imageGallery);
+            artistProfile.addChild(carouselMaskLeft);
+            artistProfile.addChild(carouselMaskRight);
           });
-
-        }).then(() => {
-          artistProfile.addChild(imageGallery);
-          artistProfile.addChild(carouselMaskLeft);
-          artistProfile.addChild(carouselMaskRight);
-        });
       }
-      buildGallery();
-      buildArtistProfile();
+      buildGallery(artist.galleryImages);
+      buildArtistProfile(
+        'Isabella Rivera',
+        'New York City, USA',
+        'Oil painting',
+        "    Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. \n    Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
+        './img/headshots/headshot.jpg'
+      );
 
       // Anchoring to the bottom left of the screen with extra padding to allow for a back button
       imageGallery.x = horizontalPadding + 200;
@@ -204,18 +244,17 @@
       // Making the gallery click+draggable horizontally
       imageGallery.interactive = true;
       imageGallery.dragging = false;
-      imageGallery.on("pointerdown", (e) => {
+      imageGallery.on('pointerdown', (e) => {
         imageGallery.calculateBounds();
         imageGallery.offsetX = imageGallery.x - e.global.x;
         imageGallery.offsetY = imageGallery.y - e.global.y;
         imageGallery.dragging = true;
       });
-      imageGallery.on("pointermove", (e) => {
+      imageGallery.on('pointermove', (e) => {
         if (imageGallery.dragging) {
-
           imageGallery.x = e.global.x + imageGallery.offsetX;
           //Check constraints
-          if (imageGallery.width > .75 * app.view.width) {
+          if (imageGallery.width > 0.75 * app.view.width) {
             if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
               //Right limit
               imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
@@ -229,18 +268,14 @@
         }
       });
 
-      imageGallery.on("pointerup", (e) => {
+      imageGallery.on('pointerup', (e) => {
         imageGallery.dragging = false;
       });
-      imageGallery.on("pointerupoutside", (e) => {
+      imageGallery.on('pointerupoutside', (e) => {
         imageGallery.dragging = false;
       });
-
-
 
       //This should probably be done through the director later.
-
     </script>
   </body>
-
 </html>
