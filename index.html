@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -63,22 +64,7 @@
       const imageGallery = new PIXI.Container();
       app.stage.addChild(artistProfile);
 
-      const carouselMaskLeft = new PIXI.Graphics();
-      const carouselMaskRight = new PIXI.Graphics();
-      carouselMaskLeft.beginFill(mainBackgroundColor);
-      carouselMaskLeft.drawRect(
-        0,
-        app.view.height - 250 - verticalPadding,
-        250,
-        250
-      );
-      carouselMaskRight.beginFill(mainBackgroundColor);
-      carouselMaskRight.drawRect(
-        app.view.width - 250,
-        app.view.height - 250 - verticalPadding,
-        250,
-        250
-      );
+
 
       async function buildArtistProfile(
         name,
@@ -115,8 +101,8 @@
             );
             rightCrop.drawRect(
               horizontalPadding +
-                artistPhoto.width -
-                Math.abs(artistPhoto.width - 450) / 2,
+              artistPhoto.width -
+              Math.abs(artistPhoto.width - 450) / 2,
               verticalPadding,
               Math.abs(artistPhoto.width - 450) / 2,
               650
@@ -189,10 +175,26 @@
             infoBox.y = verticalPadding;
             artistProfile.addChild(infoBox);
           })
-          .then(() => {});
+          .then(() => { });
       }
 
       async function buildGallery(images) {
+        const carouselMaskLeft = new PIXI.Graphics();
+        const carouselMaskRight = new PIXI.Graphics();
+        carouselMaskLeft.beginFill(mainBackgroundColor);
+        carouselMaskLeft.drawRect(
+          0,
+          app.view.height - 250 - verticalPadding,
+          250,
+          250
+        );
+        carouselMaskRight.beginFill(mainBackgroundColor);
+        carouselMaskRight.drawRect(
+          app.view.width - 250,
+          app.view.height - 250 - verticalPadding,
+          250,
+          250
+        );
         // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
         const imageGalleryPlaceholder = new PIXI.Graphics();
         imageGallery.addChild(imageGalleryPlaceholder);
@@ -278,4 +280,5 @@
       //This should probably be done through the director later.
     </script>
   </body>
+
 </html>
