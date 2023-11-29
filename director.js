@@ -51,7 +51,6 @@ var Director = {
 
     //Fade between
     fade: async (currentScene, nextScene, params) => {
-
         //Check duration
         if (params == undefined) params = {};
         if (params.duration == undefined) params.duration = 500;
@@ -120,7 +119,6 @@ var Director = {
         nextScene.x = nextSceneStartX;
         nextScene.y = nextSceneStartY;
         app.stage.addChild(nextScene);
-
         //Slide out current scene as it moves off
         Animate.to(currentScene, {
             x: currentSceneEndX, y: currentSceneEndY,

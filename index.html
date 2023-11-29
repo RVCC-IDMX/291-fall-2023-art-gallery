@@ -73,10 +73,13 @@
           './img/gallery/abstract.jpg',
         ],
       };
+      // The main screen, which contains the exhibit title and a description
       const mainScreen = new PIXI.Container();
 
+      // The artist catalog page, which contains nav buttons leading to each artist page
       const artistCatalog = new PIXI.Container();
 
+      // An array to store a varying number of artist pages
       const views = [];
       function buildMainScreen(name, description) {
         const exhibitName = new PIXI.Text(name);
@@ -85,7 +88,7 @@
         navButton.x -= navButton.width;
         navButton.y -= navButton.height;
         navButton.onclick = () => {
-          Director.showScene("catalog", { transition: Director.swipe, direction: "left", duration: 2000 });
+          Director.showScene("catalog", { transition: Director.swipe, direction: "left", duration: 750 });
         };
         mainScreen.addChild(exhibitName);
         mainScreen.addChild(exhibitDescription);
@@ -174,15 +177,18 @@
         // console.log(catalog.children);
         catalog.children.forEach(artist => {
           artist.interactive = true;
+          artist.interactionTimeStamp = Date.now();
+          artist.on("pointerdown", (e) => {
+            artist.interactionTimeStamp = Date.now();
+          });
           artist.on("pointerup", (e) => {
+            if (Date.now() - artist.interactionTimeStamp <= 150) {
+              Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+            }
 
-            Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
           });
         });
       }
-      // Create containers for the two main view components
-
-      buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
 
       function buildArtistPage(artistData) {
         const artistProfile = new PIXI.Container();
@@ -456,6 +462,11 @@
         });
         views.push(artistProfile);
       }
+
+      // Building the main screen
+      buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
+
+      // Building some artist pages
       buildArtistPage(sampleArtist);
       buildArtistPage(sampleArtist);
       buildArtistPage(sampleArtist);
@@ -467,7 +478,7 @@
       // app.stage.addChild(artistCatalog)
       Director.addScene("main", mainScreen);
       Director.addScene("catalog", artistCatalog);
-      Director.showScene("main", { transition: Director.fade, duration: 2000 })
+      Director.showScene("main", { transition: Director.fade, duration: 1000 })
     </script>
   </body>
 
