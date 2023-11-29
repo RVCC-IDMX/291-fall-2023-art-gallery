@@ -85,8 +85,7 @@
         navButton.x -= navButton.width;
         navButton.y -= navButton.height;
         navButton.onclick = () => {
-          app.stage.removeChild(mainScreen);
-          app.stage.addChild(artistCatalog);
+          Director.showScene("catalog", { transition: Director.swipe, direction: "left", duration: 2000 });
         };
         mainScreen.addChild(exhibitName);
         mainScreen.addChild(exhibitDescription);
@@ -118,7 +117,9 @@
         artistCatalog.addChild(catalog);
         let count = 0;
         artistPages.forEach(page => {
+          Director.addScene(count, page); // Adding each page to the director
           const artist = new PIXI.Container();
+          artist.viewIndex = count; // Giving the artist photo a reference to the page it's supposed to lead to
           const placeHolder = new PIXI.Graphics();
           const name = new PIXI.Text("Artist Name");
           placeHolder.beginFill(0x999999);
@@ -135,7 +136,6 @@
         });
         artistCatalog.addChild(carouselMaskLeft);
         artistCatalog.addChild(carouselMaskRight);
-
 
         catalog.y = app.view.height / 2 - catalog.height / 2;
 
@@ -171,7 +171,14 @@
         catalog.on('pointerupoutside', (e) => {
           catalog.dragging = false;
         });
+        // console.log(catalog.children);
+        catalog.children.forEach(artist => {
+          artist.interactive = true;
+          artist.on("pointerup", (e) => {
 
+            Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+          });
+        });
       }
       // Create containers for the two main view components
 
@@ -457,7 +464,10 @@
       buildArtistPage(sampleArtist);
       //This should probably be done through the director later.
       buildArtistCatalog(views);
-      app.stage.addChild(views[0])
+      // app.stage.addChild(artistCatalog)
+      Director.addScene("main", mainScreen);
+      Director.addScene("catalog", artistCatalog);
+      Director.showScene("main", { transition: Director.fade, duration: 2000 })
     </script>
   </body>
 
