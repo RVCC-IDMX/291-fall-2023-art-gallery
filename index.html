@@ -289,23 +289,23 @@
         }
 
         async function buildGallery(images) {
-          const carouselMaskLeft = new PIXI.Graphics();
-          const carouselMaskRight = new PIXI.Graphics();
-          carouselMaskLeft.beginFill(mainBackgroundColor);
-          carouselMaskLeft.drawRect(
-            0,
-            app.view.height - 250 - verticalPadding,
-            250,
-            250
-          );
-          carouselMaskRight.beginFill(mainBackgroundColor);
-          carouselMaskRight.drawRect(
-            app.view.width - 250,
-            app.view.height - 250 - verticalPadding,
-            250,
-            250
-          );
-          // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
+          // const carouselMaskLeft = new PIXI.Graphics();
+          // const carouselMaskRight = new PIXI.Graphics();
+          // carouselMaskLeft.beginFill(mainBackgroundColor);
+          // carouselMaskLeft.drawRect(
+          //   0,
+          //   app.view.height - 250 - verticalPadding,
+          //   250,
+          //   250
+          // );
+          // carouselMaskRight.beginFill(mainBackgroundColor);
+          // carouselMaskRight.drawRect(
+          //   app.view.width - 250,
+          //   app.view.height - 250 - verticalPadding,
+          //   250,
+          //   250
+          // );
+          // // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
           const imageGalleryPlaceholder = new PIXI.Graphics();
           imageGallery.addChild(imageGalleryPlaceholder);
           imageGalleryPlaceholder.beginFill(boxColor);
@@ -330,14 +330,76 @@
                 } else {
                   sprite.x = 0;
                 }
+                imageGallery.sortableChildren = true;
+                sprite.interactive = true;
+                sprite.enlarged = false;
+                sprite.originalScaleX = sprite.scale.x;
+                sprite.originalScaleY = sprite.scale.y;
+                async function enlargeToggle(target) {
+                  if (!target.enlarged) {
+                    target.interactive = false;
+                    target.originalX = target.x;
+                    target.originalY = target.y;
+                    target.zIndex = 1000;
+                    await Animate.to(target, {
+                      duration: 500,
+                      scale: {
+                        x: 1,
+                        y: 1,
+                      },
 
+                    });
+                    await Animate.to(target, {
+                      duration: 500,
+                      x: app.view.width / 2 - target.parent.x - target.width / 2,
+                      y: app.view.height / 2 - target.parent.y - target.height / 2,
+                    });
+
+
+                    target.enlarged = true;
+                    target.interactive = true;
+                  } else {
+                    target.zIndex = 0;
+                    await Animate.to(target, {
+                      scale: {
+                        x: ((250 / sprite.texture.baseTexture.height) * sprite.texture.baseTexture.width) / sprite.width,
+                        y: 250 / sprite.height
+                      },
+                      x: target.originalX,
+                      y: target.originalY,
+                      duration: 250
+                    });
+                    target.enlarged = false;
+                  }
+                }
+                sprite.on("pointerdown", (e) => {
+                  sprite.interactionTimeStamp = Date.now();
+
+                });
+                sprite.on("pointerup", (e) => {
+                  console.log(Date.now() - sprite.interactionTimeStamp);
+                  if (Date.now() - sprite.interactionTimeStamp < 150) { // Adding a minimum interval between pointer up and down to distinguish between dragging and tapping.
+                    sprite.parent.children.forEach(child => {
+
+                      if (child != sprite) {
+                        //Toggling off interactivity of other images and gallery carousel thing so things don't get weird
+                        child.interactive = !child.interactive;
+                        sprite.parent.interactive = !sprite.parent.interactive;
+                      }
+                    });
+                    enlargeToggle(sprite);
+                  }
+
+
+                });
                 count += 1;
               });
             })
             .then(() => {
+              imageGallery.children.forEach(child => child.enlarged = false);
               artistProfile.addChild(imageGallery);
-              artistProfile.addChild(carouselMaskLeft);
-              artistProfile.addChild(carouselMaskRight);
+              // artistProfile.addChild(carouselMaskLeft);
+              // artistProfile.addChild(carouselMaskRight);
             });
         }
         buildGallery(artistData.galleryImages);
@@ -357,6 +419,7 @@
           imageGallery.offsetX = imageGallery.x - e.global.x;
           imageGallery.offsetY = imageGallery.y - e.global.y;
           imageGallery.dragging = true;
+
         });
         imageGallery.on('pointermove', (e) => {
           if (imageGallery.dragging) {
@@ -377,7 +440,9 @@
         });
 
         imageGallery.on('pointerup', (e) => {
+
           imageGallery.dragging = false;
+
         });
         imageGallery.on('pointerupoutside', (e) => {
           imageGallery.dragging = false;
@@ -392,7 +457,7 @@
       buildArtistPage(sampleArtist);
       //This should probably be done through the director later.
       buildArtistCatalog(views);
-      app.stage.addChild(mainScreen)
+      app.stage.addChild(views[0])
     </script>
   </body>
 
