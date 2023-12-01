@@ -25,7 +25,7 @@
     const container = new PIXI.Container();
 
     // Center the container
-    container.position.set((1920 - container.width) / 2, 0);
+    // container.position.set((1920 - container.width) / 2, 0);
     app.stage.addChild(container);
 
 
@@ -70,6 +70,7 @@
     rect1.drawRect(260, 980, 400, 720);
     rect1.endFill();
     rect1.addChild(introText);
+    rect1.y = 0;
 
     // container.addChild(rect1);
 
@@ -92,6 +93,7 @@
     windowRect.addChild(rect2);
     windowRect.addChild(exhibitName);
     app.stage.addChild(windowRect);
+
 
 
 
