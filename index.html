@@ -67,10 +67,9 @@
     const rect1 = new PIXI.Graphics();
     rect1.beginFill(0xC0C0C0); // Lighter grey color
     rect1.lineStyle(3, 0x000000); // Black outline with 3px width
-    rect1.drawRect(260, 980, 400, 720);
+    rect1.drawRect(0, 0, 400, 620);
     rect1.endFill();
     rect1.addChild(introText);
-    rect1.y = 0;
 
     // container.addChild(rect1);
 
@@ -78,7 +77,7 @@
     const rect2 = new PIXI.Graphics();
     rect2.beginFill(0xC0C0C0); // Lighter grey color
     rect2.lineStyle(3, 0x000000); // Black outline with 3px width
-    rect2.drawRect(670, 980, 400, 720);
+    rect2.drawRect(0, 0, 400, 620);
     rect2.endFill();
     rect2.addChild(imageText);
     // container.addChild(rect2);
@@ -87,13 +86,13 @@
     const windowRect = new PIXI.Graphics();
     windowRect.beginFill(0xE0E0E0); // Light grey color
     windowRect.lineStyle(3, 0x000000); // Black outline with 3px width
-    windowRect.drawRect(260, 115, 1400, 850);
+    windowRect.drawRect(0, 0, 1400, 850);
     windowRect.endFill();
     windowRect.addChild(rect1);
     windowRect.addChild(rect2);
     windowRect.addChild(exhibitName);
     app.stage.addChild(windowRect);
-
+    console.log(windowRect.children);
 
 
 
