@@ -14,10 +14,12 @@
     // Create PIXI Application
     const app = new PIXI.Application({
       width: 1920,
-      height: 1920,
-      backgroundColor: 0xFFFFFF,
+      height: 1080,
+      backgroundColor: 0xFFF0FF,
     });
     document.body.appendChild(app.view);
+
+
 
     // Container
 
@@ -25,7 +27,6 @@
     const container = new PIXI.Container();
 
     // Center the container
-    // container.position.set((1920 - container.width) / 2, 0);
     app.stage.addChild(container);
 
 
@@ -35,19 +36,23 @@
     // Create "Exhibit Name" text
     const exhibitName = new PIXI.Text('Exhibit Name', {
       fontFamily: 'Arial',
-      fontSize: 30,
+      fontSize: 48,
       fill: 0x000000, // Black color
     });
-    exhibitName.position.set(350, 200);
-    app.stage.addChild(exhibitName);
+    exhibitName.position.set(150, 75);
+    // app.stage.addChild(exhibitName);
 
     // Create "Exhibit background / Intro Text" text
-    const introText = new PIXI.Text('Exhibit background / Intro Text', {
+    const introText = new PIXI.Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', {
       fontFamily: 'Arial',
       fontSize: 24,
+      wordWrap: true,
+      wordWrapWidth: 300,
+
       fill: 0x000000, // Black color
     });
-    introText.position.set(460, 1090);
+    introText.position.set(0, 0);
+
     // container.addChild(introText);
 
     // Create "IMAGE" text
@@ -56,8 +61,8 @@
       fontSize: 24,
       fill: 0x000000, // Black color
     });
-    imageText.position.set(870, 1090);
-    container.addChild(imageText);
+    imageText.position.set(0, 0);
+    // container.addChild(imageText);
 
 
 
@@ -67,20 +72,15 @@
     const rect1 = new PIXI.Graphics();
     rect1.beginFill(0xC0C0C0); // Lighter grey color
     rect1.lineStyle(3, 0x000000); // Black outline with 3px width
-    rect1.drawRect(0, 0, 400, 620);
+    rect1.drawRect(0, 0, 500, 615);
+    rect1.x = 150;
+    rect1.y = 175;
     rect1.endFill();
     rect1.addChild(introText);
-
-    // container.addChild(rect1);
-
-    // Create second rectangle
-    const rect2 = new PIXI.Graphics();
-    rect2.beginFill(0xC0C0C0); // Lighter grey color
-    rect2.lineStyle(3, 0x000000); // Black outline with 3px width
-    rect2.drawRect(0, 0, 400, 620);
-    rect2.endFill();
-    rect2.addChild(imageText);
-    // container.addChild(rect2);
+    // introText.wordWrapWidth = introText.parent.width - 30;
+    introText.style.wordWrapWidth = introText.parent.width - 20;
+    introText.x = introText.parent.width / 2 - introText.width / 2;
+    introText.y = 20;
 
     // Create "window" rectangle
     const windowRect = new PIXI.Graphics();
@@ -89,37 +89,43 @@
     windowRect.drawRect(0, 0, 1400, 850);
     windowRect.endFill();
     windowRect.addChild(rect1);
-    windowRect.addChild(rect2);
     windowRect.addChild(exhibitName);
-    app.stage.addChild(windowRect);
+    windowRect.x = 100;
+    windowRect.y = 100;
     console.log(windowRect.children);
+    container.addChild(windowRect);
+
+    let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
+    windowRect.addChild(placeholder);
+    placeholder.scale.set(0.12);
+    placeholder.x = 775;
+    placeholder.y = 105;
 
 
-
-
-
-
-
-
-
-
-
-
+    // Button
 
     // Create "To Artist Catalogue" button
-    const button = new PIXI.Graphics();
-    button.beginFill(0x000000); // Black color
-    button.drawRect(800, 950, 320, 60);
-    button.endFill();
-    app.stage.addChild(button);
 
     const buttonText = new PIXI.Text('To Artist Catalogue >>>', {
       fontFamily: 'Arial',
       fontSize: 24,
-      fill: 0xFFFFFF, // White color
+      fill: 0xFFFFFF,
     });
-    buttonText.position.set(860, 965);
-    app.stage.addChild(buttonText);
+
+    const button = new PIXI.Graphics();
+    button.beginFill(0x000000); // Black color
+    button.drawRect(0, 0, 350, 70);
+    button.x = 600;
+    button.y = 980;
+    button.endFill();
+    button.addChild(buttonText);
+    // buttonText.x = parent.width / 2 - buttonText.width / 2;
+    buttonText.x = 50;
+    buttonText.y = 20;
+
+    container.addChild(button);
+
+
 
     // Add hover effect to the button
     button.interactive = true;
