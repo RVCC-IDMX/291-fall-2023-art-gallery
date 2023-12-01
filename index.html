@@ -1,10 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script type="module" src="./index.js"></script>
-  </head>
-  <body></body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://pixijs.download/release/pixi.js"></script>
+</head>
+
+<body>
+  <script>
+
+    // Create PIXI Application
+    const app = new PIXI.Application({
+      width: 1920,
+      height: 1920,
+      backgroundColor: 0xFFFFFF,
+    });
+    document.body.appendChild(app.view);
+
+    // Container
+
+    // Create container for two rectangles
+    const container = new PIXI.Container();
+
+    // Center the container
+    container.position.set((1920 - container.width) / 2, 0);
+    app.stage.addChild(container);
+
+
+
+    //Text
+
+    // Create "Exhibit Name" text
+    const exhibitName = new PIXI.Text('Exhibit Name', {
+      fontFamily: 'Arial',
+      fontSize: 30,
+      fill: 0x000000, // Black color
+    });
+    exhibitName.position.set(350, 200);
+    app.stage.addChild(exhibitName);
+
+    // Create "Exhibit background / Intro Text" text
+    const introText = new PIXI.Text('Exhibit background / Intro Text', {
+      fontFamily: 'Arial',
+      fontSize: 24,
+      fill: 0x000000, // Black color
+    });
+    introText.position.set(460, 1090);
+    // container.addChild(introText);
+
+    // Create "IMAGE" text
+    const imageText = new PIXI.Text('IMAGE', {
+      fontFamily: 'Arial',
+      fontSize: 24,
+      fill: 0x000000, // Black color
+    });
+    imageText.position.set(870, 1090);
+    container.addChild(imageText);
+
+
+
+    // Rectangles
+
+    // Create first rectangle
+    const rect1 = new PIXI.Graphics();
+    rect1.beginFill(0xC0C0C0); // Lighter grey color
+    rect1.lineStyle(3, 0x000000); // Black outline with 3px width
+    rect1.drawRect(260, 980, 400, 720);
+    rect1.endFill();
+    rect1.addChild(introText);
+
+    // container.addChild(rect1);
+
+    // Create second rectangle
+    const rect2 = new PIXI.Graphics();
+    rect2.beginFill(0xC0C0C0); // Lighter grey color
+    rect2.lineStyle(3, 0x000000); // Black outline with 3px width
+    rect2.drawRect(670, 980, 400, 720);
+    rect2.endFill();
+    rect2.addChild(imageText);
+    // container.addChild(rect2);
+
+    // Create "window" rectangle
+    const windowRect = new PIXI.Graphics();
+    windowRect.beginFill(0xE0E0E0); // Light grey color
+    windowRect.lineStyle(3, 0x000000); // Black outline with 3px width
+    windowRect.drawRect(260, 115, 1400, 850);
+    windowRect.endFill();
+    windowRect.addChild(rect1);
+    windowRect.addChild(rect2);
+    windowRect.addChild(exhibitName);
+    app.stage.addChild(windowRect);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Create "To Artist Catalogue" button
+    const button = new PIXI.Graphics();
+    button.beginFill(0x000000); // Black color
+    button.drawRect(800, 950, 320, 60);
+    button.endFill();
+    app.stage.addChild(button);
+
+    const buttonText = new PIXI.Text('To Artist Catalogue >>>', {
+      fontFamily: 'Arial',
+      fontSize: 24,
+      fill: 0xFFFFFF, // White color
+    });
+    buttonText.position.set(860, 965);
+    app.stage.addChild(buttonText);
+
+    // Add hover effect to the button
+    button.interactive = true;
+    button.buttonMode = true;
+    button.alpha = 1;
+
+    button.on('pointerover', () => {
+      button.alpha = 0.8; // Change opacity to 80% on hover
+    });
+
+    button.on('pointerout', () => {
+      button.alpha = 1; // Restore opacity on mouse out
+    });
+
+
+    // //The App
+    // const app = new PIXI.Application({
+    //   width: 1920,
+    //   height: 1080,
+    //   backgroundColor: 0xffffff
+    // });
+
+    // //Add view to document
+    // document.body.appendChild(app.view);
+
+
+    // // Graphics
+
+    // // Create a container to center the rectangle
+    // const container = new PIXI.Container();
+    // app.stage.addChild(container);
+
+    // // Rectangle dimensions and margins
+    // const rectWidth = app.screen.width - 100; // 50px on each side
+    // const rectHeight = app.screen.height - 350; // 300px on the bottom, 50px on top
+
+    // // Create the rectangle graphics
+    // const rectangle = new PIXI.Graphics();
+    // rectangle.beginFill(0xE0E0E0); // Light grey fill
+    // rectangle.lineStyle(2, 0x000000); // Black outline
+    // rectangle.drawRect(0, 0, rectWidth, rectHeight);
+    // rectangle.endFill();
+
+    // // Center the rectangle within the container
+    // rectangle.position.set(50, 50);
+
+    // // Add the rectangle to the container
+    // container.addChild(rectangle);
+
+
+    // // Add Exhibit Name
+    // const basicText = new PIXI.Text('Exhibit Name');
+
+    // basicText.x = 50;
+    // basicText.y = 100;
+
+    // app.stage.addChild(basicText);
+
+    // // Style Exhibit Name
+    // const style = new PIXI.TextStyle({
+    //   fontFamily: 'Arial',
+    //   fontSize: 36,
+    //   fontStyle: 'italic',
+    //   fontWeight: 'bold',
+    //   fill: ['#ffffff', '#00ff99'], // gradient
+    //   stroke: '#4a1850',
+    //   strokeThickness: 5,
+    //   dropShadow: true,
+    //   dropShadowColor: '#000000',
+    //   dropShadowBlur: 4,
+    //   dropShadowAngle: Math.PI / 6,
+    //   dropShadowDistance: 6,
+    //   wordWrap: true,
+    //   wordWrapWidth: 440,
+    //   lineJoin: 'round',
+    // });
+
+  </script>
+</body>
+
 </html>
