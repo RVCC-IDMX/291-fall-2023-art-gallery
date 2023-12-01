@@ -82,6 +82,14 @@
     introText.x = introText.parent.width / 2 - introText.width / 2;
     introText.y = 20;
 
+    const rect2 = new PIXI.Graphics();
+    rect2.beginFill(0xC0C0C0); // Lighter grey color
+    rect2.lineStyle(4, 0x000000); // Black outline with 3px width
+    rect2.drawRect(0, 0, 460, 690);
+    rect2.x = 775;
+    rect2.y = 102;
+    rect2.endFill();
+
     // Create "window" rectangle
     const windowRect = new PIXI.Graphics();
     windowRect.beginFill(0xE0E0E0); // Light grey color
@@ -89,6 +97,7 @@
     windowRect.drawRect(0, 0, 1400, 850);
     windowRect.endFill();
     windowRect.addChild(rect1);
+    windowRect.addChild(rect2);
     windowRect.addChild(exhibitName);
     windowRect.x = 100;
     windowRect.y = 100;
@@ -141,41 +150,9 @@
     });
 
 
-    // //The App
-    // const app = new PIXI.Application({
-    //   width: 1920,
-    //   height: 1080,
-    //   backgroundColor: 0xffffff
-    // });
 
-    // //Add view to document
-    // document.body.appendChild(app.view);
-
-
-    // // Graphics
-
-    // // Create a container to center the rectangle
-    // const container = new PIXI.Container();
-    // app.stage.addChild(container);
-
-    // // Rectangle dimensions and margins
-    // const rectWidth = app.screen.width - 100; // 50px on each side
-    // const rectHeight = app.screen.height - 350; // 300px on the bottom, 50px on top
-
-    // // Create the rectangle graphics
-    // const rectangle = new PIXI.Graphics();
-    // rectangle.beginFill(0xE0E0E0); // Light grey fill
-    // rectangle.lineStyle(2, 0x000000); // Black outline
-    // rectangle.drawRect(0, 0, rectWidth, rectHeight);
-    // rectangle.endFill();
-
-    // // Center the rectangle within the container
-    // rectangle.position.set(50, 50);
-
-    // // Add the rectangle to the container
-    // container.addChild(rectangle);
-
-
+    // Saved For Later
+    
     // // Add Exhibit Name
     // const basicText = new PIXI.Text('Exhibit Name');
 
