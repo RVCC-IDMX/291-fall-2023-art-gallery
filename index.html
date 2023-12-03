@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,6 +70,119 @@
           './img/gallery/abstract.jpg',
         ],
       };
+      
+          // Sikholiwe's artist catalog
+    function newCreateArtistCatalog(){
+    // Images and names
+    const data = [
+      { name: "Man 1", image: "img/man1.jpg" },
+      { name: "Man 2", image: "img/man2.jpg" },
+      { name: "Man 3", image: "img/man3.jpg" },
+      { name: "Man 4", image: "img/man4.jpg" },
+      { name: "Woman 1", image: "img/woman1.jpg" },
+      { name: "Woman 2", image: "img/woman2.jpg" },
+      { name: "Woman 2", image: "img/woman3.jpg" },
+      { name: "Woman 3", image: "img/woman4.jpg" },
+    ];
+
+    // Container for grid layout
+    const container = new PIXI.Container();
+    app.stage.addChild(container);
+
+    // Calculate grid positions
+    const gridSize = 4;
+    const padding = 40;
+    const imageSize = (app.screen.width - (padding * (gridSize + 2))) / gridSize;
+
+    // Function to navigate to a separate page
+    const goToPage = (pageName) => {
+      console.log(`Navigating to ${pageName}`);
+      // Implement navigation logic here
+    };
+
+    for (let i = 0; i < data.length; i++) {
+      const row = Math.floor(i / gridSize);
+      const col = i % gridSize;
+
+      // Create a container for each item
+      const itemContainer = new PIXI.Container();
+
+      // Create border
+      const border = new PIXI.Graphics();
+      border.lineStyle(5, 0x000000, 1);
+      border.drawRect(0, 0, imageSize / 2, imageSize / 2 + 30); // Adjust the border size to include the name
+      itemContainer.addChild(border);
+
+      // Create image sprite
+      const image = PIXI.Sprite.from(data[i].image);
+      image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
+      image.height = imageSize / 2 - 30; // Adjust the height to fit the name
+      image.position.set(2, 2); // Adjust position to fit within the border
+      itemContainer.addChild(image);
+
+      // Create name caption text
+      const nameCaption = new PIXI.Text(data[i].name, {
+        fill: "black",
+        fontSize: 20,
+        fontWeight: "bold",
+        align: "left",
+      });
+      nameCaption.position.set(65, imageSize / 2 - 20);
+      itemContainer.addChild(nameCaption);
+
+      // Position the container in the grid
+      if (row < 1) {
+        // Top row
+        itemContainer.position.set(padding + col * (imageSize + padding), padding);
+      } else {
+        // Bottom row
+        itemContainer.position.set(padding + col * (imageSize + padding), padding * 1 + imageSize + 30); // Adjust position to include the name
+      }
+
+      // Add touch events to the entire container
+      itemContainer.interactive = true;
+
+      // 1. Event listener for name click
+      nameCaption.on('pointerdown', () => {
+        goToPage(data[i].name);
+      });
+
+      // 2. Event listeners for left and right arrows
+      if (data[i].name === "Artists names") {
+        leftArrow.on('pointerdown', () => {
+          console.log("Left arrow clicked!");
+          // Implement left arrow logic here
+        });
+
+        rightArrow.on('pointerdown', () => {
+          console.log("Right arrow clicked!");
+          // Implement right arrow logic here
+        });
+
+        // 3. Event listener for "Back to main screen" click
+        backText.on('pointerdown', () => {
+          goToPage("Main Screen");
+        });
+      }
+
+      container.addChild(itemContainer);
+    }
+
+
+
+    // Draw arrows and text in the middle
+    const middleText = new PIXI.Text("Artists names", {
+      fill: "black",
+      fontSize: 24,
+      fontWeight: "bold",
+      align: "center",
+    });
+    middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
+    app.stage.addChild(middleText);
+    }
+
+
+
       // The main screen, which contains the exhibit title and a description
       const mainScreen = new PIXI.Container();
 
@@ -481,5 +591,4 @@
       Director.showScene("main", { transition: Director.fade, duration: 1000 })
     </script>
   </body>
-
 </html>
