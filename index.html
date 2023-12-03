@@ -15,7 +15,7 @@
     const app = new PIXI.Application({
       width: 1920,
       height: 1080,
-      backgroundColor: 0xFFF0FF,
+      backgroundColor: 0xFFFFFF,
     });
     document.body.appendChild(app.view);
 
@@ -92,8 +92,8 @@
 
     // Create "window" rectangle
     const windowRect = new PIXI.Graphics();
-    windowRect.beginFill(0xE0E0E0); // Light grey color
-    windowRect.lineStyle(3, 0x000000); // Black outline with 3px width
+    windowRect.beginFill(0xFFFFFF); // Light grey color
+    windowRect.lineStyle(7.5, 0x000000); // Black outline with 3px width
     windowRect.drawRect(0, 0, 1400, 850);
     windowRect.endFill();
     windowRect.addChild(rect1);
