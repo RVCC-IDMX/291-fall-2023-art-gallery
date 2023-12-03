@@ -1,4 +1,5 @@
-  <head>
+<!DOCTYPE html>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
@@ -370,25 +371,25 @@
       }
 
       function buildArtistCatalog(artistPages) {
-        const carouselMaskLeft = new PIXI.Graphics();
-        const carouselMaskRight = new PIXI.Graphics();
-        carouselMaskLeft.beginFill(mainBackgroundColor);
-        carouselMaskLeft.drawRect(
-          0,
-          0,
-          100,
-          650
-        );
-        carouselMaskRight.beginFill(mainBackgroundColor);
-        carouselMaskRight.drawRect(
-          0,
-          0,
-          100,
-          650
-        );
-        carouselMaskLeft.y = app.view.height / 2 - carouselMaskLeft.height / 2;
-        carouselMaskRight.y = app.view.height / 2 - carouselMaskRight.height / 2;
-        carouselMaskRight.x = app.view.width - carouselMaskRight.width;
+        // const carouselMaskLeft = new PIXI.Graphics();
+        // const carouselMaskRight = new PIXI.Graphics();
+        // carouselMaskLeft.beginFill(mainBackgroundColor);
+        // carouselMaskLeft.drawRect(
+        //   0,
+        //   0,
+        //   100,
+        //   650
+        // );
+        // carouselMaskRight.beginFill(mainBackgroundColor);
+        // carouselMaskRight.drawRect(
+        //   0,
+        //   0,
+        //   100,
+        //   650
+        // );
+        // carouselMaskLeft.y = app.view.height / 2 - carouselMaskLeft.height / 2;
+        // carouselMaskRight.y = app.view.height / 2 - carouselMaskRight.height / 2;
+        // carouselMaskRight.x = app.view.width - carouselMaskRight.width;
         const catalog = new PIXI.Container();
         artistCatalog.addChild(catalog);
         let count = 0;
@@ -736,22 +737,24 @@
         views.push(artistProfile);
       }
 
-      // Building the main screen
-      buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
+      // // Building the main screen
+      // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
 
-      // Building some artist pages
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      //This should probably be done through the director later.
-      buildArtistCatalog(views);
-      // app.stage.addChild(artistCatalog)
-      Director.addScene("main", mainScreen);
-      Director.addScene("catalog", artistCatalog);
-      Director.showScene("main", { transition: Director.fade, duration: 1000 })
+      // // Building some artist pages
+      // buildArtistPage(sampleArtist);
+      // buildArtistPage(sampleArtist);
+      // buildArtistPage(sampleArtist);
+      // buildArtistPage(sampleArtist);
+      // buildArtistPage(sampleArtist);
+      // buildArtistPage(sampleArtist);
+      // //This should probably be done through the director later.
+      // buildArtistCatalog(views);
+      // // app.stage.addChild(artistCatalog)
+      // Director.addScene("main", mainScreen);
+      // Director.addScene("catalog", artistCatalog);
+      // Director.showScene("main", { transition: Director.fade, duration: 1000 })
+
+      newCreateArtistCatalog();
     </script>
   </body>
 </html>
