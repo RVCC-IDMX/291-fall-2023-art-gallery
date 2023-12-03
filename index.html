@@ -156,7 +156,6 @@
     windowRect.addChild(exhibitName);
     windowRect.x = 100;
     windowRect.y = 100;
-    console.log(windowRect.children);
     container.addChild(windowRect);
 
     let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
@@ -236,7 +235,7 @@
     // });
     }
           // Sikholiwe's artist catalog
-    function newCreateArtistCatalog(){
+    function newCreateArtistCatalog(artistPages){
     // Images and names
     const data = [
       { name: "Man 1", image: "img/man1.jpg" },
@@ -251,7 +250,7 @@
 
     // Container for grid layout
     const container = new PIXI.Container();
-    app.stage.addChild(container);
+    
 
     // Calculate grid positions
     const gridSize = 4;
@@ -264,7 +263,8 @@
       // Implement navigation logic here
     };
 
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < artistPages.length; i++) {
+
       const row = Math.floor(i / gridSize);
       const col = i % gridSize;
 
@@ -278,14 +278,14 @@
       itemContainer.addChild(border);
 
       // Create image sprite
-      const image = PIXI.Sprite.from(data[i].image);
+      const image = PIXI.Sprite.from(artistPages[i].headshotPath);
       image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
       image.height = imageSize / 2 - 30; // Adjust the height to fit the name
       image.position.set(2, 2); // Adjust position to fit within the border
       itemContainer.addChild(image);
 
       // Create name caption text
-      const nameCaption = new PIXI.Text(data[i].name, {
+      const nameCaption = new PIXI.Text(artistPages[i].name, {
         fill: "black",
         fontSize: 20,
         fontWeight: "bold",
@@ -308,11 +308,11 @@
 
       // 1. Event listener for name click
       nameCaption.on('pointerdown', () => {
-        goToPage(data[i].name);
+        goToPage(artistPages[i].name);
       });
 
       // 2. Event listeners for left and right arrows
-      if (data[i].name === "Artists names") {
+      if (artistPages[i].name === "Artists names") {
         leftArrow.on('pointerdown', () => {
           console.log("Left arrow clicked!");
           // Implement left arrow logic here
@@ -330,6 +330,7 @@
       }
 
       container.addChild(itemContainer);
+      app.stage.addChild(container);
     }
 
 
@@ -411,8 +412,8 @@
           }
           count += 1;
         });
-        artistCatalog.addChild(carouselMaskLeft);
-        artistCatalog.addChild(carouselMaskRight);
+        // artistCatalog.addChild(carouselMaskLeft);
+        // artistCatalog.addChild(carouselMaskRight);
 
         catalog.y = app.view.height / 2 - catalog.height / 2;
 
@@ -740,21 +741,22 @@
       // // Building the main screen
       // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
 
-      // // Building some artist pages
-      // buildArtistPage(sampleArtist);
-      // buildArtistPage(sampleArtist);
-      // buildArtistPage(sampleArtist);
-      // buildArtistPage(sampleArtist);
-      // buildArtistPage(sampleArtist);
-      // buildArtistPage(sampleArtist);
-      // //This should probably be done through the director later.
+      // Building some artist pages
+      buildArtistPage(sampleArtist);
+      buildArtistPage(sampleArtist);
+      buildArtistPage(sampleArtist);
+      buildArtistPage(sampleArtist);
+      buildArtistPage(sampleArtist);
+      buildArtistPage(sampleArtist);
+      //This should probably be done through the director later.
       // buildArtistCatalog(views);
       // // app.stage.addChild(artistCatalog)
       // Director.addScene("main", mainScreen);
       // Director.addScene("catalog", artistCatalog);
       // Director.showScene("main", { transition: Director.fade, duration: 1000 })
 
-      newCreateArtistCatalog();
+      newCreateArtistCatalog(views);
+      
     </script>
   </body>
 </html>
