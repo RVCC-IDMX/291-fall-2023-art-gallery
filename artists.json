@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Isabella Rivera",
+    "location": "New York City, USA",
+    "medium": "Oil painting",
+    "artistStatement": "Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
+    "works": [
+      "./img/gallery/mountains.jpg",
+      "./img/gallery/prism.jpg",
+      "./img/gallery/wind.jpg",
+      "./img/gallery/dog.jpg",
+      "./img/gallery/trees.jpg"
+    ]
+  }
+]
