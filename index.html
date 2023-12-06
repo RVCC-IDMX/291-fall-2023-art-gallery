@@ -5,6 +5,7 @@
     <title>Document</title>
     <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
     <!-- <script type="text/javascript" src="./artists.json"></script> -->
+    <script src="./data.js"></script>
     <script src="./bezier.js"></script>
     <script src="./animate.js"></script>
     <script src="./ui_elements.js"></script>
@@ -307,7 +308,7 @@
       itemContainer.interactive = true;
 
       // 1. Event listener for name click
-      nameCaption.on('pointerdown', () => {
+      itemContainer.on('pointerdown', () => {
         goToPage(artistPages[i].name);
       });
 
@@ -342,11 +343,10 @@
       fontWeight: "bold",
       align: "center",
     });
+
     middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
     app.stage.addChild(middleText);
     }
-
-
 
       // The main screen, which contains the exhibit title and a description
       const mainScreen = new PIXI.Container();
@@ -742,12 +742,7 @@
       // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
 
       // Building some artist pages
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
-      buildArtistPage(sampleArtist);
+      artistData.forEach(artist => buildArtistPage(artist))
       //This should probably be done through the director later.
       // buildArtistCatalog(views);
       // // app.stage.addChild(artistCatalog)
