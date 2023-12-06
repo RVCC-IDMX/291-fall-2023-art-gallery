@@ -192,11 +192,11 @@
       const imageSize = (app.screen.width - (padding * (gridSize + 2))) / gridSize;
       // const imageSize = 250
 
-      // Function to navigate to a separate page
-      const goToPage = (pageName) => {
-        console.log(`Navigating to ${pageName}`);
-        // Implement navigation logic here
-      };
+      // // Function to navigate to a separate page
+      // const goToPage = (pageName) => {
+      //   console.log(`Navigating to ${pageName}`);
+      //   // Implement navigation logic here
+      // };
 
       for (let i = 0; i < artistPages.length; i++) {
         // Made some edits here so the grid can infinitely repeat
@@ -256,10 +256,10 @@
         // Add touch events to the entire container
         itemContainer.interactive = true;
 
-        // 1. Event listener for name click
-        itemContainer.on('pointerdown', () => {
-          goToPage(artistPages[i].name);
-        });
+        // // 1. Event listener for name click
+        // itemContainer.on('pointerdown', () => {
+        //   goToPage(artistPages[i].name);
+        // });
 
         // 2. Event listeners for left and right arrows
         if (artistPages[i].name === "Artists names") {
@@ -281,6 +281,12 @@
 
         container.addChild(itemContainer);
       }
+
+      const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", {});
+      toMainScreenButton.on("pointertap", () => Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 }));
+      toMainScreenButton.y = app.view.height - padding - toMainScreenButton.height;
+      toMainScreenButton.x = padding;
+      artistCatalog.addChild(toMainScreenButton);
 
       container.interactive = true;
       container.dragging = false;
@@ -338,7 +344,9 @@
       // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
       // app.stage.addChild(middleText);
 
-      Director.addScene("catalog", container);
+      artistCatalog.addChild(container);
+
+      Director.addScene("catalog", artistCatalog);
       return container;
     }
 
@@ -352,6 +360,11 @@
       artistProfile.name = artistData.name;
       artistProfile.headshotPath = artistData.headshotPath;
       const imageGallery = new PIXI.Container();
+      const toCatalogButton = new UI.Button(0, 0, "<< Artist Catalog", {});
+      toCatalogButton.on("pointertap", () => Director.showScene("catalog", { transition: Director.swipe, direction: "up", duration: 1000 }));
+      toCatalogButton.y = app.view.height - toCatalogButton.height;
+      toCatalogButton.x = horizontalPadding;
+      artistProfile.addChild(toCatalogButton);
 
       async function buildArtistProfile(artist) {
         PIXI.Assets.load(artist.headshotPath)
@@ -459,22 +472,6 @@
       }
 
       async function buildGallery(images) {
-        // const carouselMaskLeft = new PIXI.Graphics();
-        // const carouselMaskRight = new PIXI.Graphics();
-        // carouselMaskLeft.beginFill(mainBackgroundColor);
-        // carouselMaskLeft.drawRect(
-        //   0,
-        //   app.view.height - 250 - verticalPadding,
-        //   250,
-        //   250
-        // );
-        // carouselMaskRight.beginFill(mainBackgroundColor);
-        // carouselMaskRight.drawRect(
-        //   app.view.width - 250,
-        //   app.view.height - 250 - verticalPadding,
-        //   250,
-        //   250
-        // );
         // // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
         const imageGalleryPlaceholder = new PIXI.Graphics();
         imageGallery.addChild(imageGalleryPlaceholder);
@@ -529,6 +526,8 @@
                   target.enlarged = true;
                   target.interactive = true;
                 } else {
+                  // Set the catalog navigation button to non-interactive
+                  toCatalogButton.interactive = true;
                   target.zIndex = 0;
                   await Animate.to(target, {
                     scale: {
@@ -542,9 +541,11 @@
                   target.enlarged = false;
                 }
               }
+
+              // Separating the pointer event into up and down and adding a timer
+              // To distinguish between tapping an image and dragging the gallery
               sprite.on("pointerdown", (e) => {
                 sprite.interactionTimeStamp = Date.now();
-
               });
               sprite.on("pointerup", (e) => {
                 console.log(Date.now() - sprite.interactionTimeStamp);
@@ -554,6 +555,7 @@
                     if (child != sprite) {
                       //Toggling off interactivity of other images and gallery carousel thing so things don't get weird
                       child.interactive = !child.interactive;
+                      toCatalogButton.interactive = false;
                       sprite.parent.interactive = !sprite.parent.interactive;
                     }
                   });
@@ -579,7 +581,7 @@
 
       // Anchoring to the bottom left of the screen with extra padding to allow for a back button
       imageGallery.x = horizontalPadding + 200;
-      imageGallery.y = app.view.height - imageGallery.height - verticalPadding;
+      imageGallery.y = app.view.height - imageGallery.height - 2 * verticalPadding;
 
       // Making the gallery click+draggable horizontally
       imageGallery.interactive = true;
@@ -617,7 +619,13 @@
       imageGallery.on('pointerupoutside', (e) => {
         imageGallery.dragging = false;
       });
+
+      // Add a nav button for returning to the catalog screen
+
+
       views.push(artistProfile);
+
+      // Add an index to the profile for use in loading via the Director
       artistProfile.viewIndex = views.length - 1;
       Director.addScene(artistProfile.viewIndex, artistProfile);
     }
