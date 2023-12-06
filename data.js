@@ -113,11 +113,11 @@ const artistData = [
   },
 
   {
-    name: "Isabella Rivera",
-    location: "New York City, USA",
-    medium: "Oil painting",
+    name: "Aiden Foster",
+    location: "Cape Town, South Africa",
+    medium: "Woodworking",
     description:
-      "    Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. \n    Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
+      "Aiden Foster's woodworking is an ode to the resilience of nature and the beauty of reclamation. In the diverse landscapes of Cape Town, he uncovers the hidden stories within reclaimed wood and transforms them into functional pieces of art. Each piece he creates carries the history of the materials and the land they come from, reminding us of the importance of sustainability and the potential for renewal. His goal is to breathe new life into the discarded and to remind us of the significance of cherishing our planet's resources.",
     headshotPath: "./img/headshots/headshot.jpg",
     galleryImages: [
       "./img/gallery/mountains.jpg",
@@ -128,13 +128,28 @@ const artistData = [
       "./img/gallery/abstract.jpg",
     ],
   },
-
   {
-    name: "Isabella Rivera",
-    location: "New York City, USA",
-    medium: "Oil painting",
+    name: "Maya Patel",
+    location: "Mumbai, India",
+    medium: "Digital collage",
     description:
-      "    Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. \n    Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
+      "Maya Patel's digital collages are a cultural tapestry that weaves together elements from India and around the world. Mumbai's vibrant and diverse atmosphere serves as a constant source of inspiration for her work. Through layers of imagery, she blends elements of tradition and modernity, fusing colors, patterns, and stories to create visual narratives that speak to the diversity of humanity. Her collages are a celebration of the global connections that bridge cultures, languages, and experiences, reminding us of the beauty in our shared human tapestry.",
+    headshotPath: "./img/headshots/headshot.jpg",
+    galleryImages: [
+      "./img/gallery/mountains.jpg",
+      "./img/gallery/prism.jpg",
+      "./img/gallery/wind.jpg",
+      "./img/gallery/dog.jpg",
+      "./img/gallery/trees.jpg",
+      "./img/gallery/abstract.jpg",
+    ],
+  },
+  {
+    name: "Oliver Jensen",
+    location: "Vancouver, Canada",
+    medium: "Glassblowing",
+    description:
+      "Oliver Jensen's glass sculptures are a testament to the ever-changing and fragile nature of life. Nestled in the natural beauty of Vancouver, he captures the fluidity of nature and the ephemeral essence of existence in the transparent beauty of glass. Each piece represents a moment frozen in time, embodying the idea that life is fleeting, yet profoundly beautiful. By working with the transparency and delicacy of glass, he aims to provoke reflection on the transient and the enduring, inviting viewers to embrace the ethereal while cherishing the tangible.",
     headshotPath: "./img/headshots/headshot.jpg",
     galleryImages: [
       "./img/gallery/mountains.jpg",
