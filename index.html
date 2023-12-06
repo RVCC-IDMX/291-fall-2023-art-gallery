@@ -56,13 +56,6 @@
 
     // Alex's Main/Start Screen
     function buildMainScreen() {
-      // Container
-
-      // Create container for two rectangles
-      const container = new PIXI.Container();
-
-      // Center the container
-      app.stage.addChild(container);
 
       //Text
 
@@ -134,7 +127,7 @@
       windowRect.addChild(exhibitName);
       windowRect.x = 100;
       windowRect.y = 100;
-      container.addChild(windowRect);
+      mainScreen.addChild(windowRect);
 
       let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
       windowRect.addChild(placeholder);
@@ -164,9 +157,7 @@
       buttonText.x = 50;
       buttonText.y = 20;
 
-      container.addChild(button);
-
-
+      mainScreen.addChild(button);
 
       // Add hover effect to the button
       button.interactive = true;
@@ -181,37 +172,14 @@
         button.alpha = 1; // Restore opacity on mouse out
       });
 
+      // Add navigation function to button
+      button.on('pointertap', () => {
+        Director.showScene("catalog", { transition: Director.swipe, direction: "left", duration: 750 });
+      });
 
-
-      // Saved For Later
-
-      // // Add Exhibit Name
-      // const basicText = new PIXI.Text('Exhibit Name');
-
-      // basicText.x = 50;
-      // basicText.y = 100;
-
-      // app.stage.addChild(basicText);
-
-      // // Style Exhibit Name
-      // const style = new PIXI.TextStyle({
-      //   fontFamily: 'Arial',
-      //   fontSize: 36,
-      //   fontStyle: 'italic',
-      //   fontWeight: 'bold',
-      //   fill: ['#ffffff', '#00ff99'], // gradient
-      //   stroke: '#4a1850',
-      //   strokeThickness: 5,
-      //   dropShadow: true,
-      //   dropShadowColor: '#000000',
-      //   dropShadowBlur: 4,
-      //   dropShadowAngle: Math.PI / 6,
-      //   dropShadowDistance: 6,
-      //   wordWrap: true,
-      //   wordWrapWidth: 440,
-      //   lineJoin: 'round',
-      // });
+      Director.addScene("mainscreen", mainScreen);
     }
+
     // Sikholiwe's artist catalog
     function buildArtistCatalog(artistPages) {
 
@@ -231,7 +199,6 @@
       };
 
       for (let i = 0; i < artistPages.length; i++) {
-
         // Made some edits here so the grid can infinitely repeat
         const row = Math.floor((i % (2 * gridSize)) / gridSize);
         console.log(row);
@@ -239,6 +206,7 @@
         const offset = (app.view.width - padding * 2) * Math.floor(i / (gridSize * 2));
         // Create a container for each item
         const itemContainer = new PIXI.Container();
+        itemContainer.viewIndex = i;
 
         // Create border
         const border = new PIXI.Graphics();
@@ -346,7 +314,6 @@
       container.on('pointerupoutside', (e) => {
         container.dragging = false;
       });
-      // console.log(container.children);
       container.children.forEach(artist => {
         artist.interactive = true;
         artist.interactionTimeStamp = Date.now();
@@ -355,12 +322,11 @@
         });
         artist.on("pointerup", (e) => {
           if (Date.now() - artist.interactionTimeStamp <= 150) {
+            console.log(views[artist.viewIndex]);
             Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
           }
-
         });
       });
-      app.stage.addChild(container);
       // Draw arrows and text in the middle
       // const middleText = new PIXI.Text("Artists names", {
       //   fill: "black",
@@ -371,6 +337,9 @@
 
       // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
       // app.stage.addChild(middleText);
+
+      Director.addScene("catalog", container);
+      return container;
     }
 
 
@@ -649,6 +618,8 @@
         imageGallery.dragging = false;
       });
       views.push(artistProfile);
+      artistProfile.viewIndex = views.length - 1;
+      Director.addScene(artistProfile.viewIndex, artistProfile);
     }
 
     // // Building the main screen
@@ -656,15 +627,11 @@
 
     // Building some artist pages
     artistData.forEach(artist => buildArtistPage(artist));
-    //This should probably be done through the director later.
-    // buildArtistCatalog(views);
-    // // app.stage.addChild(artistCatalog)
-    // Director.addScene("main", mainScreen);
-    // Director.addScene("catalog", artistCatalog);
-    // Director.showScene("main", { transition: Director.fade, duration: 1000 })
 
     buildArtistCatalog(views);
 
+    buildMainScreen();
+    Director.showScene("mainscreen", { transition: Director.fade, duration: 1000 })
   </script>
 </body>
 
