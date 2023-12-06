@@ -1,817 +1,671 @@
 <!DOCTYPE html>
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
-    <!-- <script type="text/javascript" src="./artists.json"></script> -->
-    <script src="./data.js"></script>
-    <script src="./bezier.js"></script>
-    <script src="./animate.js"></script>
-    <script src="./ui_elements.js"></script>
-    <script src="./director.js"></script>
-    <script src="./index.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
+  <!-- <script type="text/javascript" src="./artists.json"></script> -->
+  <script src="./data.js"></script>
+  <script src="./bezier.js"></script>
+  <script src="./animate.js"></script>
+  <script src="./ui_elements.js"></script>
+  <script src="./director.js"></script>
+  <script src="./index.js"></script>
 
-  </head>
+</head>
 
-  <body>
-    <style>
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-    </style>
-    <script defer>
-      const horizontalPadding = 50;
-      const verticalPadding = 50;
-      mainBackgroundColor = 0xffffff;
-      const boxColor = 0x555555;
+<body>
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
+  <script defer>
+    const horizontalPadding = 50;
+    const verticalPadding = 50;
+    const mainBackgroundColor = 0xffffff;
+    const boxColor = 0x555555;
 
-      //The App
-      const app = new PIXI.Application({
-        width: 1920,
-        height: 1080,
-        backgroundColor: 0xffffff,
+    //The App
+    const app = new PIXI.Application({
+      width: 1920,
+      height: 1080,
+      backgroundColor: 0xffffff,
+    });
+
+    // app.resizeTo = window;
+    //Fix, or at least improve blurry text
+    PIXI.settings.ROUND_PIXELS = true;
+
+    //Add view to the document
+    document.body.appendChild(app.view);
+
+    // The main screen, which contains the exhibit title and a description
+    const mainScreen = new PIXI.Container();
+
+    // The artist catalog page, which contains nav buttons leading to each artist page
+    const artistCatalog = new PIXI.Container();
+
+    // An array to store a varying number of artist pages
+    const views = [];
+
+    // Alex's Main/Start Screen
+    function buildMainScreen() {
+      // Container
+
+      // Create container for two rectangles
+      const container = new PIXI.Container();
+
+      // Center the container
+      app.stage.addChild(container);
+
+      //Text
+
+      // Create "Exhibit Name" text
+      const exhibitName = new PIXI.Text('Exhibit Name', {
+        fontFamily: 'Arial',
+        fontSize: 48,
+        fill: 0x000000, // Black color
+      });
+      exhibitName.position.set(150, 75);
+      // app.stage.addChild(exhibitName);
+
+      // Create "Exhibit background / Intro Text" text
+      const introText = new PIXI.Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+        wordWrap: true,
+        wordWrapWidth: 300,
+
+        fill: 0x000000, // Black color
+      });
+      introText.position.set(0, 0);
+
+      // container.addChild(introText);
+
+      // Create "IMAGE" text
+      const imageText = new PIXI.Text('IMAGE', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+        fill: 0x000000, // Black color
+      });
+      imageText.position.set(0, 0);
+      // container.addChild(imageText);
+
+
+
+      // Rectangles
+
+      // Create first rectangle
+      const rect1 = new PIXI.Graphics();
+      rect1.beginFill(0xC0C0C0); // Lighter grey color
+      rect1.lineStyle(3, 0x000000); // Black outline with 3px width
+      rect1.drawRect(0, 0, 500, 615);
+      rect1.x = 150;
+      rect1.y = 175;
+      rect1.endFill();
+      rect1.addChild(introText);
+      // introText.wordWrapWidth = introText.parent.width - 30;
+      introText.style.wordWrapWidth = introText.parent.width - 20;
+      introText.x = introText.parent.width / 2 - introText.width / 2;
+      introText.y = 20;
+
+      const rect2 = new PIXI.Graphics();
+      rect2.beginFill(0xC0C0C0); // Lighter grey color
+      rect2.lineStyle(4, 0x000000); // Black outline with 3px width
+      rect2.drawRect(0, 0, 460, 690);
+      rect2.x = 775;
+      rect2.y = 102;
+      rect2.endFill();
+
+      // Create "window" rectangle
+      const windowRect = new PIXI.Graphics();
+      windowRect.beginFill(0xFFFFFF); // Light grey color
+      windowRect.lineStyle(7.5, 0x000000); // Black outline with 3px width
+      windowRect.drawRect(0, 0, 1400, 850);
+      windowRect.endFill();
+      windowRect.addChild(rect1);
+      windowRect.addChild(rect2);
+      windowRect.addChild(exhibitName);
+      windowRect.x = 100;
+      windowRect.y = 100;
+      container.addChild(windowRect);
+
+      let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
+      windowRect.addChild(placeholder);
+      placeholder.scale.set(0.12);
+      placeholder.x = 775;
+      placeholder.y = 105;
+
+
+      // Button
+
+      // Create "To Artist Catalogue" button
+
+      const buttonText = new PIXI.Text('To Artist Catalogue >>>', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+        fill: 0xFFFFFF,
       });
 
-      // app.resizeTo = window;
-      //Fix, or at least improve blurry text
-      PIXI.settings.ROUND_PIXELS = true;
+      const button = new PIXI.Graphics();
+      button.beginFill(0x000000); // Black color
+      button.drawRect(0, 0, 350, 70);
+      button.x = 600;
+      button.y = 980;
+      button.endFill();
+      button.addChild(buttonText);
+      // buttonText.x = parent.width / 2 - buttonText.width / 2;
+      buttonText.x = 50;
+      buttonText.y = 20;
 
-      //Add view to the document
-      document.body.appendChild(app.view);
+      container.addChild(button);
 
-      // Some temporary data to start creating model
-      class Artist {
-        constructor(name, location, medium, description, headshotPath, galleryImages, url0) {
-          this.name = name;
-          this.location = location;
-          this.medium = medium;
-          this.description = description;
-          this.headshotPath = headshotPath; // Add default later
-          this.galleryImages = galleryImages; // Add default later
-          this.url = url; //add default later
-        }
-      }
-      const sampleArtist = {
-        name: 'Isabella Rivera',
-        location: 'New York City, USA',
-        medium: 'Oil painting',
-        description:
-          "    Isabella Rivera's art is an exploration of the juxtaposition between the urban and the natural world. In the heart of New York City, she finds inspiration in the city's towering skyscrapers and bustling streets, which she blends seamlessly with the serene beauty of nature. \n    Her oil paintings aim to capture the essence of this harmony by using vivid colors and intricate details to depict the dynamic interplay between these two seemingly contrasting realms. Through her work, she hopes to remind viewers that even within the concrete jungle, there is a place for the organic and the tranquil.",
-        headshotPath: './img/headshots/headshot.jpg',
-        galleryImages: [
-          './img/gallery/mountains.jpg',
-          './img/gallery/prism.jpg',
-          './img/gallery/wind.jpg',
-          './img/gallery/dog.jpg',
-          './img/gallery/trees.jpg',
-          './img/gallery/abstract.jpg',
-        ],
+
+
+      // Add hover effect to the button
+      button.interactive = true;
+      button.buttonMode = true;
+      button.alpha = 1;
+
+      button.on('pointerover', () => {
+        button.alpha = 0.8; // Change opacity to 80% on hover
+      });
+
+      button.on('pointerout', () => {
+        button.alpha = 1; // Restore opacity on mouse out
+      });
+
+
+
+      // Saved For Later
+
+      // // Add Exhibit Name
+      // const basicText = new PIXI.Text('Exhibit Name');
+
+      // basicText.x = 50;
+      // basicText.y = 100;
+
+      // app.stage.addChild(basicText);
+
+      // // Style Exhibit Name
+      // const style = new PIXI.TextStyle({
+      //   fontFamily: 'Arial',
+      //   fontSize: 36,
+      //   fontStyle: 'italic',
+      //   fontWeight: 'bold',
+      //   fill: ['#ffffff', '#00ff99'], // gradient
+      //   stroke: '#4a1850',
+      //   strokeThickness: 5,
+      //   dropShadow: true,
+      //   dropShadowColor: '#000000',
+      //   dropShadowBlur: 4,
+      //   dropShadowAngle: Math.PI / 6,
+      //   dropShadowDistance: 6,
+      //   wordWrap: true,
+      //   wordWrapWidth: 440,
+      //   lineJoin: 'round',
+      // });
+    }
+    // Sikholiwe's artist catalog
+    function buildArtistCatalog(artistPages) {
+
+      // Container for grid layout
+      const container = new PIXI.Container();
+
+      // Calculate grid positions
+      const gridSize = 4;
+      const padding = 40;
+      const imageSize = (app.screen.width - (padding * (gridSize + 2))) / gridSize;
+      // const imageSize = 250
+
+      // Function to navigate to a separate page
+      const goToPage = (pageName) => {
+        console.log(`Navigating to ${pageName}`);
+        // Implement navigation logic here
       };
 
-      
-    // Alex's Main/Start Screen
-    function createMainScreenNew(){
+      for (let i = 0; i < artistPages.length; i++) {
 
-    // Container
+        // Made some edits here so the grid can infinitely repeat
+        const row = Math.floor((i % (2 * gridSize)) / gridSize);
+        console.log(row);
+        const col = i % gridSize;
+        const offset = (app.view.width - padding * 2) * Math.floor(i / (gridSize * 2));
+        // Create a container for each item
+        const itemContainer = new PIXI.Container();
 
-    // Create container for two rectangles
-    const container = new PIXI.Container();
+        // Create border
+        const border = new PIXI.Graphics();
+        border.lineStyle(5, 0x000000, 1);
+        border.drawRect(0, 0, imageSize / 2, imageSize / 2 + 30); // Adjust the border size to include the name
+        itemContainer.addChild(border);
 
-    // Center the container
-    app.stage.addChild(container);
+        // Create image sprite
+        const image = PIXI.Sprite.from(artistPages[i].headshotPath);
+        const originalHeight = image.height;
+        const originalWidth = image.width;
+        image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
+        image.height = imageSize / 2 - 30; // Adjust the height to fit the name
+        // image.height = imageSize;
+        // image.width = originalWidth * imageSize/originalHeight
+        image.position.set(2, 2); // Adjust position to fit within the border
+        itemContainer.addChild(image);
 
-
-
-    //Text
-
-    // Create "Exhibit Name" text
-    const exhibitName = new PIXI.Text('Exhibit Name', {
-      fontFamily: 'Arial',
-      fontSize: 48,
-      fill: 0x000000, // Black color
-    });
-    exhibitName.position.set(150, 75);
-    // app.stage.addChild(exhibitName);
-
-    // Create "Exhibit background / Intro Text" text
-    const introText = new PIXI.Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      wordWrap: true,
-      wordWrapWidth: 300,
-
-      fill: 0x000000, // Black color
-    });
-    introText.position.set(0, 0);
-
-    // container.addChild(introText);
-
-    // Create "IMAGE" text
-    const imageText = new PIXI.Text('IMAGE', {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: 0x000000, // Black color
-    });
-    imageText.position.set(0, 0);
-    // container.addChild(imageText);
-
-
-
-    // Rectangles
-
-    // Create first rectangle
-    const rect1 = new PIXI.Graphics();
-    rect1.beginFill(0xC0C0C0); // Lighter grey color
-    rect1.lineStyle(3, 0x000000); // Black outline with 3px width
-    rect1.drawRect(0, 0, 500, 615);
-    rect1.x = 150;
-    rect1.y = 175;
-    rect1.endFill();
-    rect1.addChild(introText);
-    // introText.wordWrapWidth = introText.parent.width - 30;
-    introText.style.wordWrapWidth = introText.parent.width - 20;
-    introText.x = introText.parent.width / 2 - introText.width / 2;
-    introText.y = 20;
-
-    const rect2 = new PIXI.Graphics();
-    rect2.beginFill(0xC0C0C0); // Lighter grey color
-    rect2.lineStyle(4, 0x000000); // Black outline with 3px width
-    rect2.drawRect(0, 0, 460, 690);
-    rect2.x = 775;
-    rect2.y = 102;
-    rect2.endFill();
-
-    // Create "window" rectangle
-    const windowRect = new PIXI.Graphics();
-    windowRect.beginFill(0xFFFFFF); // Light grey color
-    windowRect.lineStyle(7.5, 0x000000); // Black outline with 3px width
-    windowRect.drawRect(0, 0, 1400, 850);
-    windowRect.endFill();
-    windowRect.addChild(rect1);
-    windowRect.addChild(rect2);
-    windowRect.addChild(exhibitName);
-    windowRect.x = 100;
-    windowRect.y = 100;
-    container.addChild(windowRect);
-
-    let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
-    windowRect.addChild(placeholder);
-    placeholder.scale.set(0.12);
-    placeholder.x = 775;
-    placeholder.y = 105;
-
-
-    // Button
-
-    // Create "To Artist Catalogue" button
-
-    const buttonText = new PIXI.Text('To Artist Catalogue >>>', {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: 0xFFFFFF,
-    });
-
-    const button = new PIXI.Graphics();
-    button.beginFill(0x000000); // Black color
-    button.drawRect(0, 0, 350, 70);
-    button.x = 600;
-    button.y = 980;
-    button.endFill();
-    button.addChild(buttonText);
-    // buttonText.x = parent.width / 2 - buttonText.width / 2;
-    buttonText.x = 50;
-    buttonText.y = 20;
-
-    container.addChild(button);
-
-
-
-    // Add hover effect to the button
-    button.interactive = true;
-    button.buttonMode = true;
-    button.alpha = 1;
-
-    button.on('pointerover', () => {
-      button.alpha = 0.8; // Change opacity to 80% on hover
-    });
-
-    button.on('pointerout', () => {
-      button.alpha = 1; // Restore opacity on mouse out
-    });
-
-
-
-    // Saved For Later
-    
-    // // Add Exhibit Name
-    // const basicText = new PIXI.Text('Exhibit Name');
-
-    // basicText.x = 50;
-    // basicText.y = 100;
-
-    // app.stage.addChild(basicText);
-
-    // // Style Exhibit Name
-    // const style = new PIXI.TextStyle({
-    //   fontFamily: 'Arial',
-    //   fontSize: 36,
-    //   fontStyle: 'italic',
-    //   fontWeight: 'bold',
-    //   fill: ['#ffffff', '#00ff99'], // gradient
-    //   stroke: '#4a1850',
-    //   strokeThickness: 5,
-    //   dropShadow: true,
-    //   dropShadowColor: '#000000',
-    //   dropShadowBlur: 4,
-    //   dropShadowAngle: Math.PI / 6,
-    //   dropShadowDistance: 6,
-    //   wordWrap: true,
-    //   wordWrapWidth: 440,
-    //   lineJoin: 'round',
-    // });
-    }
-          // Sikholiwe's artist catalog
-    async function newCreateArtistCatalog(artistPages){
-    // Images and names
-    const data = [
-      { name: "Man 1", image: "img/man1.jpg" },
-      { name: "Man 2", image: "img/man2.jpg" },
-      { name: "Man 3", image: "img/man3.jpg" },
-      { name: "Man 4", image: "img/man4.jpg" },
-      { name: "Woman 1", image: "img/woman1.jpg" },
-      { name: "Woman 2", image: "img/woman2.jpg" },
-      { name: "Woman 2", image: "img/woman3.jpg" },
-      { name: "Woman 3", image: "img/woman4.jpg" },
-    ];
-
-    // Container for grid layout
-    const container = new PIXI.Container();
-    
-
-    // Calculate grid positions
-    const gridSize = 4;
-    const padding = 40;
-    const imageSize = (app.screen.width - (padding * (gridSize + 2))) / gridSize;
-    // const imageSize = 250
-
-    // Function to navigate to a separate page
-    const goToPage = (pageName) => {
-      console.log(`Navigating to ${pageName}`);
-      // Implement navigation logic here
-    };
-
-    for (let i = 0; i < artistPages.length; i++) {
-
-      // Made some edits here so the grid can infinitely repeat
-      const row = Math.floor((i%(2*gridSize))  / gridSize);
-      console.log(row)
-      const col = i % gridSize 
-      const offset = (app.view.width - padding*2) * Math.floor(i/(gridSize*2));
-      // Create a container for each item
-      const itemContainer = new PIXI.Container();
-
-      // Create border
-      const border = new PIXI.Graphics();
-      border.lineStyle(5, 0x000000, 1);
-      border.drawRect(0, 0, imageSize / 2, imageSize / 2 + 30); // Adjust the border size to include the name
-      itemContainer.addChild(border);
-
-      // Create image sprite
-      const image = PIXI.Sprite.from(artistPages[i].headshotPath);
-      const originalHeight = image.height
-      const originalWidth = image.width
-      image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
-      image.height = imageSize / 2 - 30; // Adjust the height to fit the name
-      // image.height = imageSize;
-      // image.width = originalWidth * imageSize/originalHeight
-      image.position.set(2, 2); // Adjust position to fit within the border
-      itemContainer.addChild(image);
-
-      // Create name caption text
-      const nameCaption = new PIXI.Text(artistPages[i].name, {
-        fill: "black",
-        fontSize: 20,
-        fontWeight: "bold",
-        align: "left",
-      });
-
-      itemContainer.addChild(nameCaption);
-            nameCaption.position.set(nameCaption.parent.width/2 - nameCaption.width/2, imageSize / 2 - 20);
-
-     // Position the container in the grid
-      // if (row < 1) {
-      //   // Top row
-      //   itemContainer.position.set(padding + col * (imageSize + padding), padding);
-      // } else {
-      //   // Bottom row
-      //   itemContainer.position.set(padding + col * (imageSize + padding), padding + imageSize + 30); // Adjust position to include the name
-      // }
-
-      if (row < 1) {
-        // Top row
-        itemContainer.position.set(padding + col * (imageSize + padding) + offset, app.view.height * .33 - itemContainer.height/2);
-      } else {
-        // Bottom row
-        itemContainer.position.set(padding + col * (imageSize + padding) + offset, app.view.height * .66 - itemContainer.height/2); // Adjust position to include the name
-      }
-      
-      // Add touch events to the entire container
-      itemContainer.interactive = true;
-
-      // 1. Event listener for name click
-      itemContainer.on('pointerdown', () => {
-        goToPage(artistPages[i].name);
-      });
-
-      // 2. Event listeners for left and right arrows
-      if (artistPages[i].name === "Artists names") {
-        leftArrow.on('pointerdown', () => {
-          console.log("Left arrow clicked!");
-          // Implement left arrow logic here
+        // Create name caption text
+        const nameCaption = new PIXI.Text(artistPages[i].name, {
+          fill: "black",
+          fontSize: 20,
+          fontWeight: "bold",
+          align: "left",
         });
 
-        rightArrow.on('pointerdown', () => {
-          console.log("Right arrow clicked!");
-          // Implement right arrow logic here
+        itemContainer.addChild(nameCaption);
+        nameCaption.position.set(nameCaption.parent.width / 2 - nameCaption.width / 2, imageSize / 2 - 20);
+
+        // Position the container in the grid
+        // if (row < 1) {
+        //   // Top row
+        //   itemContainer.position.set(padding + col * (imageSize + padding), padding);
+        // } else {
+        //   // Bottom row
+        //   itemContainer.position.set(padding + col * (imageSize + padding), padding + imageSize + 30); // Adjust position to include the name
+        // }
+
+        if (row < 1) {
+          // Top row
+          itemContainer.position.set(padding + col * (imageSize + padding) + offset, app.view.height * .33 - itemContainer.height / 2);
+        } else {
+          // Bottom row
+          itemContainer.position.set(padding + col * (imageSize + padding) + offset, app.view.height * .66 - itemContainer.height / 2); // Adjust position to include the name
+        }
+
+        // Add touch events to the entire container
+        itemContainer.interactive = true;
+
+        // 1. Event listener for name click
+        itemContainer.on('pointerdown', () => {
+          goToPage(artistPages[i].name);
         });
 
-        // 3. Event listener for "Back to main screen" click
-        backText.on('pointerdown', () => {
-          goToPage("Main Screen");
-        });
+        // 2. Event listeners for left and right arrows
+        if (artistPages[i].name === "Artists names") {
+          leftArrow.on('pointerdown', () => {
+            console.log("Left arrow clicked!");
+            // Implement left arrow logic here
+          });
+
+          rightArrow.on('pointerdown', () => {
+            console.log("Right arrow clicked!");
+            // Implement right arrow logic here
+          });
+
+          // 3. Event listener for "Back to main screen" click
+          backText.on('pointerdown', () => {
+            goToPage("Main Screen");
+          });
+        }
+
+        container.addChild(itemContainer);
       }
 
-      container.addChild(itemContainer);
-    }
-
-container.interactive = true
-container.dragging = false;
-        container.on('pointerdown', (e) => {
-          container.calculateBounds();
-          container.offsetX = container.x - e.global.x;
-          container.offsetY = container.y - e.global.y;
-          container.dragging = true;
-        });
-        container.on('pointermove', (e) => {
-          if (container.dragging) {
-            container.x = e.global.x + container.offsetX;
-            //Check constraints
-            if (container.width > 0.75 * app.view.width) {
-              if (container.x < -container.width + 0.75 * app.view.width) {
-                //Right limit
-                container.x = -container.width + 0.75 * app.view.width;
-              } else if (container.x > 0.25 * app.view.width) {
-                //Left limit
-                container.x = 0.25 * app.view.width;
-              }
-            } else {
-              container.x = horizontalPadding + 200;
+      container.interactive = true;
+      container.dragging = false;
+      container.on('pointerdown', (e) => {
+        container.calculateBounds();
+        container.offsetX = container.x - e.global.x;
+        container.offsetY = container.y - e.global.y;
+        container.dragging = true;
+      });
+      container.on('pointermove', (e) => {
+        if (container.dragging) {
+          container.x = e.global.x + container.offsetX;
+          //Check constraints
+          if (container.width > 0.75 * app.view.width) {
+            if (container.x < -container.width + 0.75 * app.view.width) {
+              //Right limit
+              container.x = -container.width + 0.75 * app.view.width;
+            } else if (container.x > 0.25 * app.view.width) {
+              //Left limit
+              container.x = 0.25 * app.view.width;
             }
+          } else {
+            container.x = horizontalPadding + 200;
           }
-        });
+        }
+      });
 
-        container.on('pointerup', (e) => {
-          container.dragging = false;
-        });
-        container.on('pointerupoutside', (e) => {
-          container.dragging = false;
-        });
-        // console.log(container.children);
-        container.children.forEach(artist => {
-          artist.interactive = true;
+      container.on('pointerup', (e) => {
+        container.dragging = false;
+      });
+      container.on('pointerupoutside', (e) => {
+        container.dragging = false;
+      });
+      // console.log(container.children);
+      container.children.forEach(artist => {
+        artist.interactive = true;
+        artist.interactionTimeStamp = Date.now();
+        artist.on("pointerdown", (e) => {
           artist.interactionTimeStamp = Date.now();
-          artist.on("pointerdown", (e) => {
-            artist.interactionTimeStamp = Date.now();
-          });
-          artist.on("pointerup", (e) => {
-            if (Date.now() - artist.interactionTimeStamp <= 150) {
-              Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
-            }
-
-          });
         });
-              app.stage.addChild(container);
-    // Draw arrows and text in the middle
-    // const middleText = new PIXI.Text("Artists names", {
-    //   fill: "black",
-    //   fontSize: 24,
-    //   fontWeight: "bold",
-    //   align: "center",
-    // });
+        artist.on("pointerup", (e) => {
+          if (Date.now() - artist.interactionTimeStamp <= 150) {
+            Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+          }
 
-    // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
-    // app.stage.addChild(middleText);
+        });
+      });
+      app.stage.addChild(container);
+      // Draw arrows and text in the middle
+      // const middleText = new PIXI.Text("Artists names", {
+      //   fill: "black",
+      //   fontSize: 24,
+      //   fontWeight: "bold",
+      //   align: "center",
+      // });
+
+      // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
+      // app.stage.addChild(middleText);
     }
 
-      // The main screen, which contains the exhibit title and a description
-      const mainScreen = new PIXI.Container();
 
-      // The artist catalog page, which contains nav buttons leading to each artist page
-      const artistCatalog = new PIXI.Container();
 
-      // An array to store a varying number of artist pages
-      const views = [];
-      function buildMainScreen(name, description) {
-        const exhibitName = new PIXI.Text(name);
-        const exhibitDescription = new PIXI.Text(description);
-        const navButton = new UI.Button(app.view.width, app.view.height, "View Featured Artists >>");
-        navButton.x -= navButton.width;
-        navButton.y -= navButton.height;
-        navButton.onclick = () => {
-          Director.showScene("catalog", { transition: Director.swipe, direction: "left", duration: 750 });
-        };
-        mainScreen.addChild(exhibitName);
-        mainScreen.addChild(exhibitDescription);
-        mainScreen.addChild(navButton);
-        exhibitDescription.y = exhibitName.height + exhibitName.y;
+
+
+
+    function buildArtistPage(artistData) {
+      const artistProfile = new PIXI.Container();
+      artistProfile.name = artistData.name;
+      artistProfile.headshotPath = artistData.headshotPath;
+      const imageGallery = new PIXI.Container();
+
+      async function buildArtistProfile(artist) {
+        PIXI.Assets.load(artist.headshotPath)
+          .then(async () => {
+            const texture = await PIXI.Assets.load(artist.headshotPath);
+            const artistPhoto = await new PIXI.Sprite(texture);
+
+            //Adding rectangles to crop photo to uniform dimensions of 650X450
+            const leftCrop = new PIXI.Graphics();
+            const rightCrop = new PIXI.Graphics();
+
+            artistPhoto.height = 650;
+            artistPhoto.width =
+              (650 / artistPhoto.texture.baseTexture.height) *
+              artistPhoto.width;
+            artistPhoto.x = horizontalPadding;
+            artistPhoto.y = verticalPadding;
+            artistProfile.addChild(artistPhoto);
+            artistProfile.addChild(leftCrop);
+            artistProfile.addChild(rightCrop);
+            leftCrop.beginFill(mainBackgroundColor);
+            rightCrop.beginFill(mainBackgroundColor);
+            leftCrop.drawRect(
+              horizontalPadding,
+              verticalPadding,
+              Math.abs(artistPhoto.width - 450) / 2,
+              650
+            );
+            rightCrop.drawRect(
+              horizontalPadding +
+              artistPhoto.width -
+              Math.abs(artistPhoto.width - 450) / 2,
+              verticalPadding,
+              Math.abs(artistPhoto.width - 450) / 2,
+              650
+            );
+            // leftCrop.x -= (artistPhoto.width - leftCrop.width);
+          })
+          .then(() => {
+            const infoBox = new PIXI.Container();
+            const infoBoxPadding = 50;
+            const infoBoxElementSpacing = 10;
+            const infoBoxBackground = new PIXI.Graphics();
+            infoBoxBackground.beginFill(mainBackgroundColor);
+            infoBoxBackground.drawRect(0, 0, 1300, 650);
+            const artistName = new PIXI.Text(artist.name, {
+              fontFamily: 'sans-serif',
+              fontWeight: 'bold',
+              fontSize: 32,
+              fill: 0x000000,
+            });
+            const artistLocation = new PIXI.Text(artist.location, {
+              fontFamily: 'sans-serif',
+              fontSize: 26,
+              fill: 0x000000,
+            });
+            const artistMedium = new PIXI.Text(artist.medium, {
+              fontFamily: 'sans-serif',
+              fontSize: 26,
+              fill: 0x000000,
+            });
+
+            const artistQRCode = new PIXI.Graphics();
+            artistQRCode.beginFill(0x000000);
+            artistQRCode.drawRect(0, 0, 300, 300);
+
+            const artistDescription = new PIXI.Text(artist.description, {
+              fontFamily: 'sans-serif',
+              lineHeight: 35,
+              wordWrap: true,
+              wordWrapWidth: (infoBoxBackground.width * 2) / 3 - infoBoxPadding,
+              fontSize: 26,
+              fill: 0x000000,
+            });
+
+            infoBox.addChild(infoBoxBackground);
+            infoBox.addChild(artistName);
+            infoBox.addChild(artistLocation);
+            infoBox.addChild(artistMedium);
+            infoBox.addChild(artistQRCode);
+            infoBox.addChild(artistDescription);
+
+            artistName.x = infoBoxPadding;
+            artistName.y = infoBoxPadding;
+            artistLocation.x = infoBoxPadding;
+            artistLocation.y =
+              artistName.y +
+              artistName.height / 2 +
+              artistLocation.height +
+              infoBoxElementSpacing;
+            artistMedium.x = infoBoxPadding;
+            artistMedium.y =
+              artistLocation.y + artistMedium.height + infoBoxElementSpacing;
+            artistQRCode.x = infoBoxPadding;
+            artistQRCode.y =
+              artistMedium.y + artistMedium.height + 2 * infoBoxElementSpacing;
+            artistDescription.x = infoBoxBackground.width / 3 - infoBoxPadding;
+            artistDescription.y = infoBoxPadding;
+
+            // Anchoring to the top right of the screen
+            infoBox.x = app.view.width - infoBox.width - horizontalPadding;
+            infoBox.y = verticalPadding;
+            artistProfile.addChild(infoBox);
+          });
       }
 
-      function buildArtistCatalog(artistPages) {
+      async function buildGallery(images) {
         // const carouselMaskLeft = new PIXI.Graphics();
         // const carouselMaskRight = new PIXI.Graphics();
         // carouselMaskLeft.beginFill(mainBackgroundColor);
         // carouselMaskLeft.drawRect(
         //   0,
-        //   0,
-        //   100,
-        //   650
+        //   app.view.height - 250 - verticalPadding,
+        //   250,
+        //   250
         // );
         // carouselMaskRight.beginFill(mainBackgroundColor);
         // carouselMaskRight.drawRect(
-        //   0,
-        //   0,
-        //   100,
-        //   650
+        //   app.view.width - 250,
+        //   app.view.height - 250 - verticalPadding,
+        //   250,
+        //   250
         // );
-        // carouselMaskLeft.y = app.view.height / 2 - carouselMaskLeft.height / 2;
-        // carouselMaskRight.y = app.view.height / 2 - carouselMaskRight.height / 2;
-        // carouselMaskRight.x = app.view.width - carouselMaskRight.width;
-        const catalog = new PIXI.Container();
-        artistCatalog.addChild(catalog);
-        let count = 0;
-        artistPages.forEach(page => {
-          Director.addScene(count, page); // Adding each page to the director
-          const artist = new PIXI.Container();
-          artist.viewIndex = count; // Giving the artist photo a reference to the page it's supposed to lead to
-          const placeHolder = new PIXI.Graphics();
-          const name = new PIXI.Text("Artist Name");
-          placeHolder.beginFill(0x999999);
-          placeHolder.drawRect(0, 0, 450, 650);
-          artist.addChild(placeHolder);
-          artist.addChild(name);
-          catalog.addChild(artist);
-          if (count > 0) {
-            artist.x = catalog.children[count - 1].x + artist.width + 50;
-          } else {
-            artist.x = carouselMaskLeft.width;
-          }
-          count += 1;
-        });
-        // artistCatalog.addChild(carouselMaskLeft);
-        // artistCatalog.addChild(carouselMaskRight);
-
-        catalog.y = app.view.height / 2 - catalog.height / 2;
-
-        catalog.interactive = true;
-        catalog.dragging = false;
-        catalog.on('pointerdown', (e) => {
-          catalog.calculateBounds();
-          catalog.offsetX = catalog.x - e.global.x;
-          catalog.offsetY = catalog.y - e.global.y;
-          catalog.dragging = true;
-        });
-        catalog.on('pointermove', (e) => {
-          if (catalog.dragging) {
-            catalog.x = e.global.x + catalog.offsetX;
-            //Check constraints
-            if (catalog.width > 0.75 * app.view.width) {
-              if (catalog.x < -catalog.width + 0.75 * app.view.width) {
-                //Right limit
-                catalog.x = -catalog.width + 0.75 * app.view.width;
-              } else if (catalog.x > 0.25 * app.view.width) {
-                //Left limit
-                catalog.x = 0.25 * app.view.width;
+        // // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
+        const imageGalleryPlaceholder = new PIXI.Graphics();
+        imageGallery.addChild(imageGalleryPlaceholder);
+        imageGalleryPlaceholder.beginFill(boxColor);
+        imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
+        await PIXI.Assets.load(images)
+          .then(() => {
+            imageGallery.children.pop(0);
+            // This way to make this work seems pretty cursed, but whatever.
+            let count = 0;
+            images.forEach(async (path) => {
+              const texture = await PIXI.Assets.load(path);
+              const sprite = await new PIXI.Sprite(texture);
+              sprite.height = 250;
+              sprite.width =
+                (250 / sprite.texture.baseTexture.height) * sprite.width;
+              imageGallery.addChild(sprite);
+              if (count != 0) {
+                sprite.x =
+                  imageGallery.children[count - 1].x +
+                  imageGallery.children[count - 1].width +
+                  50;
+              } else {
+                sprite.x = 0;
               }
-            } else {
-              catalog.x = horizontalPadding + 200;
-            }
-          }
-        });
+              imageGallery.sortableChildren = true;
+              sprite.interactive = true;
+              sprite.enlarged = false;
+              sprite.originalScaleX = sprite.scale.x;
+              sprite.originalScaleY = sprite.scale.y;
+              async function enlargeToggle(target) {
+                if (!target.enlarged) {
+                  target.interactive = false;
+                  target.originalX = target.x;
+                  target.originalY = target.y;
+                  target.zIndex = 1000;
+                  await Animate.to(target, {
+                    duration: 500,
+                    scale: {
+                      x: 1,
+                      y: 1,
+                    },
 
-        catalog.on('pointerup', (e) => {
-          catalog.dragging = false;
-        });
-        catalog.on('pointerupoutside', (e) => {
-          catalog.dragging = false;
-        });
-        // console.log(catalog.children);
-        catalog.children.forEach(artist => {
-          artist.interactive = true;
-          artist.interactionTimeStamp = Date.now();
-          artist.on("pointerdown", (e) => {
-            artist.interactionTimeStamp = Date.now();
-          });
-          artist.on("pointerup", (e) => {
-            if (Date.now() - artist.interactionTimeStamp <= 150) {
-              Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
-            }
+                  });
+                  await Animate.to(target, {
+                    duration: 500,
+                    x: app.view.width / 2 - target.parent.x - target.width / 2,
+                    y: app.view.height / 2 - target.parent.y - target.height / 2,
+                  });
 
-          });
-        });
-      }
 
-      function buildArtistPage(artistData) {
-        const artistProfile = new PIXI.Container();
-        artistProfile.name = artistData.name;
-        artistProfile.headshotPath = artistData.headshotPath;
-        const imageGallery = new PIXI.Container();
-
-        async function buildArtistProfile(artist) {
-          PIXI.Assets.load(artist.headshotPath)
-            .then(async () => {
-              const texture = await PIXI.Assets.load(artist.headshotPath);
-              const artistPhoto = await new PIXI.Sprite(texture);
-
-              //Adding rectangles to crop photo to uniform dimensions of 650X450
-              const leftCrop = new PIXI.Graphics();
-              const rightCrop = new PIXI.Graphics();
-
-              artistPhoto.height = 650;
-              artistPhoto.width =
-                (650 / artistPhoto.texture.baseTexture.height) *
-                artistPhoto.width;
-              artistPhoto.x = horizontalPadding;
-              artistPhoto.y = verticalPadding;
-              artistProfile.addChild(artistPhoto);
-              artistProfile.addChild(leftCrop);
-              artistProfile.addChild(rightCrop);
-              leftCrop.beginFill(mainBackgroundColor);
-              rightCrop.beginFill(mainBackgroundColor);
-              leftCrop.drawRect(
-                horizontalPadding,
-                verticalPadding,
-                Math.abs(artistPhoto.width - 450) / 2,
-                650
-              );
-              rightCrop.drawRect(
-                horizontalPadding +
-                artistPhoto.width -
-                Math.abs(artistPhoto.width - 450) / 2,
-                verticalPadding,
-                Math.abs(artistPhoto.width - 450) / 2,
-                650
-              );
-              // leftCrop.x -= (artistPhoto.width - leftCrop.width);
-            })
-            .then(() => {
-              const infoBox = new PIXI.Container();
-              const infoBoxPadding = 50;
-              const infoBoxElementSpacing = 10;
-              const infoBoxBackground = new PIXI.Graphics();
-              infoBoxBackground.beginFill(mainBackgroundColor);
-              infoBoxBackground.drawRect(0, 0, 1300, 650);
-              const artistName = new PIXI.Text(artist.name, {
-                fontFamily: 'sans-serif',
-                fontWeight: 'bold',
-                fontSize: 32,
-                fill: 0x000000,
-              });
-              const artistLocation = new PIXI.Text(artist.location, {
-                fontFamily: 'sans-serif',
-                fontSize: 26,
-                fill: 0x000000,
-              });
-              const artistMedium = new PIXI.Text(artist.medium, {
-                fontFamily: 'sans-serif',
-                fontSize: 26,
-                fill: 0x000000,
-              });
-
-              const artistQRCode = new PIXI.Graphics();
-              artistQRCode.beginFill(0x000000);
-              artistQRCode.drawRect(0, 0, 300, 300);
-
-              const artistDescription = new PIXI.Text(artist.description, {
-                fontFamily: 'sans-serif',
-                lineHeight: 35,
-                wordWrap: true,
-                wordWrapWidth: (infoBoxBackground.width * 2) / 3 - infoBoxPadding,
-                fontSize: 26,
-                fill: 0x000000,
-              });
-
-              infoBox.addChild(infoBoxBackground);
-              infoBox.addChild(artistName);
-              infoBox.addChild(artistLocation);
-              infoBox.addChild(artistMedium);
-              infoBox.addChild(artistQRCode);
-              infoBox.addChild(artistDescription);
-
-              artistName.x = infoBoxPadding;
-              artistName.y = infoBoxPadding;
-              artistLocation.x = infoBoxPadding;
-              artistLocation.y =
-                artistName.y +
-                artistName.height / 2 +
-                artistLocation.height +
-                infoBoxElementSpacing;
-              artistMedium.x = infoBoxPadding;
-              artistMedium.y =
-                artistLocation.y + artistMedium.height + infoBoxElementSpacing;
-              artistQRCode.x = infoBoxPadding;
-              artistQRCode.y =
-                artistMedium.y + artistMedium.height + 2 * infoBoxElementSpacing;
-              artistDescription.x = infoBoxBackground.width / 3 - infoBoxPadding;
-              artistDescription.y = infoBoxPadding;
-
-              // Anchoring to the top right of the screen
-              infoBox.x = app.view.width - infoBox.width - horizontalPadding;
-              infoBox.y = verticalPadding;
-              artistProfile.addChild(infoBox);
-            });
-        }
-
-        async function buildGallery(images) {
-          // const carouselMaskLeft = new PIXI.Graphics();
-          // const carouselMaskRight = new PIXI.Graphics();
-          // carouselMaskLeft.beginFill(mainBackgroundColor);
-          // carouselMaskLeft.drawRect(
-          //   0,
-          //   app.view.height - 250 - verticalPadding,
-          //   250,
-          //   250
-          // );
-          // carouselMaskRight.beginFill(mainBackgroundColor);
-          // carouselMaskRight.drawRect(
-          //   app.view.width - 250,
-          //   app.view.height - 250 - verticalPadding,
-          //   250,
-          //   250
-          // );
-          // // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
-          const imageGalleryPlaceholder = new PIXI.Graphics();
-          imageGallery.addChild(imageGalleryPlaceholder);
-          imageGalleryPlaceholder.beginFill(boxColor);
-          imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
-          await PIXI.Assets.load(images)
-            .then(() => {
-              imageGallery.children.pop(0);
-              // This way to make this work seems pretty cursed, but whatever.
-              let count = 0;
-              images.forEach(async (path) => {
-                const texture = await PIXI.Assets.load(path);
-                const sprite = await new PIXI.Sprite(texture);
-                sprite.height = 250;
-                sprite.width =
-                  (250 / sprite.texture.baseTexture.height) * sprite.width;
-                imageGallery.addChild(sprite);
-                if (count != 0) {
-                  sprite.x =
-                    imageGallery.children[count - 1].x +
-                    imageGallery.children[count - 1].width +
-                    50;
+                  target.enlarged = true;
+                  target.interactive = true;
                 } else {
-                  sprite.x = 0;
+                  target.zIndex = 0;
+                  await Animate.to(target, {
+                    scale: {
+                      x: ((250 / sprite.texture.baseTexture.height) * sprite.texture.baseTexture.width) / sprite.width,
+                      y: 250 / sprite.height
+                    },
+                    x: target.originalX,
+                    y: target.originalY,
+                    duration: 250
+                  });
+                  target.enlarged = false;
                 }
-                imageGallery.sortableChildren = true;
-                sprite.interactive = true;
-                sprite.enlarged = false;
-                sprite.originalScaleX = sprite.scale.x;
-                sprite.originalScaleY = sprite.scale.y;
-                async function enlargeToggle(target) {
-                  if (!target.enlarged) {
-                    target.interactive = false;
-                    target.originalX = target.x;
-                    target.originalY = target.y;
-                    target.zIndex = 1000;
-                    await Animate.to(target, {
-                      duration: 500,
-                      scale: {
-                        x: 1,
-                        y: 1,
-                      },
-
-                    });
-                    await Animate.to(target, {
-                      duration: 500,
-                      x: app.view.width / 2 - target.parent.x - target.width / 2,
-                      y: app.view.height / 2 - target.parent.y - target.height / 2,
-                    });
-
-
-                    target.enlarged = true;
-                    target.interactive = true;
-                  } else {
-                    target.zIndex = 0;
-                    await Animate.to(target, {
-                      scale: {
-                        x: ((250 / sprite.texture.baseTexture.height) * sprite.texture.baseTexture.width) / sprite.width,
-                        y: 250 / sprite.height
-                      },
-                      x: target.originalX,
-                      y: target.originalY,
-                      duration: 250
-                    });
-                    target.enlarged = false;
-                  }
-                }
-                sprite.on("pointerdown", (e) => {
-                  sprite.interactionTimeStamp = Date.now();
-
-                });
-                sprite.on("pointerup", (e) => {
-                  console.log(Date.now() - sprite.interactionTimeStamp);
-                  if (Date.now() - sprite.interactionTimeStamp < 150) { // Adding a minimum interval between pointer up and down to distinguish between dragging and tapping.
-                    sprite.parent.children.forEach(child => {
-
-                      if (child != sprite) {
-                        //Toggling off interactivity of other images and gallery carousel thing so things don't get weird
-                        child.interactive = !child.interactive;
-                        sprite.parent.interactive = !sprite.parent.interactive;
-                      }
-                    });
-                    enlargeToggle(sprite);
-                  }
-
-
-                });
-                count += 1;
-              });
-            })
-            .then(() => {
-              imageGallery.children.forEach(child => child.enlarged = false);
-              artistProfile.addChild(imageGallery);
-              // artistProfile.addChild(carouselMaskLeft);
-              // artistProfile.addChild(carouselMaskRight);
-            });
-        }
-        buildGallery(artistData.galleryImages);
-        buildArtistProfile(
-          artistData
-        );
-
-        // Anchoring to the bottom left of the screen with extra padding to allow for a back button
-        imageGallery.x = horizontalPadding + 200;
-        imageGallery.y = app.view.height - imageGallery.height - verticalPadding;
-
-        // Making the gallery click+draggable horizontally
-        imageGallery.interactive = true;
-        imageGallery.dragging = false;
-        imageGallery.on('pointerdown', (e) => {
-          imageGallery.calculateBounds();
-          imageGallery.offsetX = imageGallery.x - e.global.x;
-          imageGallery.offsetY = imageGallery.y - e.global.y;
-          imageGallery.dragging = true;
-
-        });
-        imageGallery.on('pointermove', (e) => {
-          if (imageGallery.dragging) {
-            imageGallery.x = e.global.x + imageGallery.offsetX;
-            //Check constraints
-            if (imageGallery.width > 0.75 * app.view.width) {
-              if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
-                //Right limit
-                imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
-              } else if (imageGallery.x > 0.25 * app.view.width) {
-                //Left limit
-                imageGallery.x = 0.25 * app.view.width;
               }
-            } else {
-              imageGallery.x = horizontalPadding + 200;
-            }
-          }
-        });
+              sprite.on("pointerdown", (e) => {
+                sprite.interactionTimeStamp = Date.now();
 
-        imageGallery.on('pointerup', (e) => {
+              });
+              sprite.on("pointerup", (e) => {
+                console.log(Date.now() - sprite.interactionTimeStamp);
+                if (Date.now() - sprite.interactionTimeStamp < 150) { // Adding a minimum interval between pointer up and down to distinguish between dragging and tapping.
+                  sprite.parent.children.forEach(child => {
 
-          imageGallery.dragging = false;
+                    if (child != sprite) {
+                      //Toggling off interactivity of other images and gallery carousel thing so things don't get weird
+                      child.interactive = !child.interactive;
+                      sprite.parent.interactive = !sprite.parent.interactive;
+                    }
+                  });
+                  enlargeToggle(sprite);
+                }
 
-        });
-        imageGallery.on('pointerupoutside', (e) => {
-          imageGallery.dragging = false;
-        });
-        views.push(artistProfile);
+
+              });
+              count += 1;
+            });
+          })
+          .then(() => {
+            imageGallery.children.forEach(child => child.enlarged = false);
+            artistProfile.addChild(imageGallery);
+            // artistProfile.addChild(carouselMaskLeft);
+            // artistProfile.addChild(carouselMaskRight);
+          });
       }
+      buildGallery(artistData.galleryImages);
+      buildArtistProfile(
+        artistData
+      );
 
-      // // Building the main screen
-      // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
+      // Anchoring to the bottom left of the screen with extra padding to allow for a back button
+      imageGallery.x = horizontalPadding + 200;
+      imageGallery.y = app.view.height - imageGallery.height - verticalPadding;
 
-      // Building some artist pages
-      artistData.forEach(artist => buildArtistPage(artist))
-      //This should probably be done through the director later.
-      // buildArtistCatalog(views);
-      // // app.stage.addChild(artistCatalog)
-      // Director.addScene("main", mainScreen);
-      // Director.addScene("catalog", artistCatalog);
-      // Director.showScene("main", { transition: Director.fade, duration: 1000 })
+      // Making the gallery click+draggable horizontally
+      imageGallery.interactive = true;
+      imageGallery.dragging = false;
+      imageGallery.on('pointerdown', (e) => {
+        imageGallery.calculateBounds();
+        imageGallery.offsetX = imageGallery.x - e.global.x;
+        imageGallery.offsetY = imageGallery.y - e.global.y;
+        imageGallery.dragging = true;
 
-      newCreateArtistCatalog(views);
-      
-    </script>
-  </body>
+      });
+      imageGallery.on('pointermove', (e) => {
+        if (imageGallery.dragging) {
+          imageGallery.x = e.global.x + imageGallery.offsetX;
+          //Check constraints
+          if (imageGallery.width > 0.75 * app.view.width) {
+            if (imageGallery.x < -imageGallery.width + 0.75 * app.view.width) {
+              //Right limit
+              imageGallery.x = -imageGallery.width + 0.75 * app.view.width;
+            } else if (imageGallery.x > 0.25 * app.view.width) {
+              //Left limit
+              imageGallery.x = 0.25 * app.view.width;
+            }
+          } else {
+            imageGallery.x = horizontalPadding + 200;
+          }
+        }
+      });
+
+      imageGallery.on('pointerup', (e) => {
+
+        imageGallery.dragging = false;
+
+      });
+      imageGallery.on('pointerupoutside', (e) => {
+        imageGallery.dragging = false;
+      });
+      views.push(artistProfile);
+    }
+
+    // // Building the main screen
+    // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
+
+    // Building some artist pages
+    artistData.forEach(artist => buildArtistPage(artist));
+    //This should probably be done through the director later.
+    // buildArtistCatalog(views);
+    // // app.stage.addChild(artistCatalog)
+    // Director.addScene("main", mainScreen);
+    // Director.addScene("catalog", artistCatalog);
+    // Director.showScene("main", { transition: Director.fade, duration: 1000 })
+
+    buildArtistCatalog(views);
+
+  </script>
+</body>
+
 </html>
