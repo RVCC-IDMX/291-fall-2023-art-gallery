@@ -236,7 +236,7 @@
     // });
     }
           // Sikholiwe's artist catalog
-    function newCreateArtistCatalog(artistPages){
+    async function newCreateArtistCatalog(artistPages){
     // Images and names
     const data = [
       { name: "Man 1", image: "img/man1.jpg" },
@@ -257,6 +257,7 @@
     const gridSize = 4;
     const padding = 40;
     const imageSize = (app.screen.width - (padding * (gridSize + 2))) / gridSize;
+    // const imageSize = 250
 
     // Function to navigate to a separate page
     const goToPage = (pageName) => {
@@ -266,9 +267,11 @@
 
     for (let i = 0; i < artistPages.length; i++) {
 
-      const row = Math.floor(i / gridSize);
-      const col = i % gridSize;
-
+      // Made some edits here so the grid can infinitely repeat
+      const row = Math.floor((i%(2*gridSize))  / gridSize);
+      console.log(row)
+      const col = i % gridSize 
+      const offset = (app.view.width - padding*2) * Math.floor(i/(gridSize*2));
       // Create a container for each item
       const itemContainer = new PIXI.Container();
 
@@ -280,8 +283,12 @@
 
       // Create image sprite
       const image = PIXI.Sprite.from(artistPages[i].headshotPath);
+      const originalHeight = image.height
+      const originalWidth = image.width
       image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
       image.height = imageSize / 2 - 30; // Adjust the height to fit the name
+      // image.height = imageSize;
+      // image.width = originalWidth * imageSize/originalHeight
       image.position.set(2, 2); // Adjust position to fit within the border
       itemContainer.addChild(image);
 
@@ -292,18 +299,27 @@
         fontWeight: "bold",
         align: "left",
       });
-      nameCaption.position.set(65, imageSize / 2 - 20);
-      itemContainer.addChild(nameCaption);
 
-      // Position the container in the grid
+      itemContainer.addChild(nameCaption);
+            nameCaption.position.set(nameCaption.parent.width/2 - nameCaption.width/2, imageSize / 2 - 20);
+
+     // Position the container in the grid
+      // if (row < 1) {
+      //   // Top row
+      //   itemContainer.position.set(padding + col * (imageSize + padding), padding);
+      // } else {
+      //   // Bottom row
+      //   itemContainer.position.set(padding + col * (imageSize + padding), padding + imageSize + 30); // Adjust position to include the name
+      // }
+
       if (row < 1) {
         // Top row
-        itemContainer.position.set(padding + col * (imageSize + padding), padding);
+        itemContainer.position.set(padding + col * (imageSize + padding) + offset, app.view.height * .33 - itemContainer.height/2);
       } else {
         // Bottom row
-        itemContainer.position.set(padding + col * (imageSize + padding), padding * 1 + imageSize + 30); // Adjust position to include the name
+        itemContainer.position.set(padding + col * (imageSize + padding) + offset, app.view.height * .66 - itemContainer.height/2); // Adjust position to include the name
       }
-
+      
       // Add touch events to the entire container
       itemContainer.interactive = true;
 
@@ -331,21 +347,65 @@
       }
 
       container.addChild(itemContainer);
-      app.stage.addChild(container);
     }
 
+container.interactive = true
+container.dragging = false;
+        container.on('pointerdown', (e) => {
+          container.calculateBounds();
+          container.offsetX = container.x - e.global.x;
+          container.offsetY = container.y - e.global.y;
+          container.dragging = true;
+        });
+        container.on('pointermove', (e) => {
+          if (container.dragging) {
+            container.x = e.global.x + container.offsetX;
+            //Check constraints
+            if (container.width > 0.75 * app.view.width) {
+              if (container.x < -container.width + 0.75 * app.view.width) {
+                //Right limit
+                container.x = -container.width + 0.75 * app.view.width;
+              } else if (container.x > 0.25 * app.view.width) {
+                //Left limit
+                container.x = 0.25 * app.view.width;
+              }
+            } else {
+              container.x = horizontalPadding + 200;
+            }
+          }
+        });
 
+        container.on('pointerup', (e) => {
+          container.dragging = false;
+        });
+        container.on('pointerupoutside', (e) => {
+          container.dragging = false;
+        });
+        // console.log(container.children);
+        container.children.forEach(artist => {
+          artist.interactive = true;
+          artist.interactionTimeStamp = Date.now();
+          artist.on("pointerdown", (e) => {
+            artist.interactionTimeStamp = Date.now();
+          });
+          artist.on("pointerup", (e) => {
+            if (Date.now() - artist.interactionTimeStamp <= 150) {
+              Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+            }
 
+          });
+        });
+              app.stage.addChild(container);
     // Draw arrows and text in the middle
-    const middleText = new PIXI.Text("Artists names", {
-      fill: "black",
-      fontSize: 24,
-      fontWeight: "bold",
-      align: "center",
-    });
+    // const middleText = new PIXI.Text("Artists names", {
+    //   fill: "black",
+    //   fontSize: 24,
+    //   fontWeight: "bold",
+    //   align: "center",
+    // });
 
-    middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
-    app.stage.addChild(middleText);
+    // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
+    // app.stage.addChild(middleText);
     }
 
       // The main screen, which contains the exhibit title and a description
