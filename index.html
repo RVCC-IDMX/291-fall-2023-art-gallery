@@ -26,8 +26,7 @@
     }
   </style>
   <script defer>
-    const horizontalPadding = 50;
-    const verticalPadding = 50;
+
     const mainBackgroundColor = 0xffffff;
     const boxColor = 0x555555;
 
@@ -36,40 +35,31 @@
       width: 1920,
       height: 1080,
       backgroundColor: 0xffffff,
+      /*resolution:2,
+      autoDensity:true*/
     });
-
-    // app.resizeTo = window;
     //Fix, or at least improve blurry text
     PIXI.settings.ROUND_PIXELS = true;
 
     //Add view to the document
     document.body.appendChild(app.view);
 
-    // The main screen, which contains the exhibit title and a description
-    const mainScreen = new PIXI.Container();
-
-    // The artist catalog page, which contains nav buttons leading to each artist page
-    const artistCatalog = new PIXI.Container();
-
     // An array to store a varying number of artist pages
-    const views = [];
+              const views = [];
 
     // Alex's Main/Start Screen
-    function buildMainScreen() {
-
+    function buildMainScreen(exhibit) {
+      const container = new PIXI.Container();
       //Text
-
       // Create "Exhibit Name" text
-      const exhibitName = new PIXI.Text('Exhibit Name', {
+      const exhibitName = new PIXI.Text(exhibit.title || "title", {
         fontFamily: 'Arial',
         fontSize: 48,
         fill: 0x000000, // Black color
       });
       exhibitName.position.set(150, 75);
-      // app.stage.addChild(exhibitName);
-
       // Create "Exhibit background / Intro Text" text
-      const introText = new PIXI.Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', {
+      const introText = new PIXI.Text(exhibit.description || "description", {
         fontFamily: 'Arial',
         fontSize: 24,
         wordWrap: true,
@@ -78,8 +68,6 @@
         fill: 0x000000, // Black color
       });
       introText.position.set(0, 0);
-
-      // container.addChild(introText);
 
       // Create "IMAGE" text
       const imageText = new PIXI.Text('IMAGE', {
@@ -127,7 +115,9 @@
       windowRect.addChild(exhibitName);
       windowRect.x = 100;
       windowRect.y = 100;
-      mainScreen.addChild(windowRect);
+      container.addChild(windowRect);
+      windowRect.addChild(rect1)
+      windowRect.addChild(rect2)
 
       let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
       windowRect.addChild(placeholder);
@@ -157,7 +147,9 @@
       buttonText.x = 50;
       buttonText.y = 20;
 
-      mainScreen.addChild(button);
+      container.addChild(button);
+
+
 
       // Add hover effect to the button
       button.interactive = true;
@@ -176,8 +168,7 @@
       button.on('pointertap', () => {
         Director.showScene("catalog", { transition: Director.swipe, direction: "left", duration: 750 });
       });
-
-      Director.addScene("mainscreen", mainScreen);
+      return container;
     }
 
     // Sikholiwe's artist catalog
@@ -192,16 +183,9 @@
       const imageSize = (app.screen.width - (padding * (gridSize + 2))) / gridSize;
       // const imageSize = 250
 
-      // // Function to navigate to a separate page
-      // const goToPage = (pageName) => {
-      //   console.log(`Navigating to ${pageName}`);
-      //   // Implement navigation logic here
-      // };
-
       for (let i = 0; i < artistPages.length; i++) {
         // Made some edits here so the grid can infinitely repeat
         const row = Math.floor((i % (2 * gridSize)) / gridSize);
-        console.log(row);
         const col = i % gridSize;
         const offset = (app.view.width - padding * 2) * Math.floor(i / (gridSize * 2));
         // Create a container for each item
@@ -237,13 +221,6 @@
         nameCaption.position.set(nameCaption.parent.width / 2 - nameCaption.width / 2, imageSize / 2 - 20);
 
         // Position the container in the grid
-        // if (row < 1) {
-        //   // Top row
-        //   itemContainer.position.set(padding + col * (imageSize + padding), padding);
-        // } else {
-        //   // Bottom row
-        //   itemContainer.position.set(padding + col * (imageSize + padding), padding + imageSize + 30); // Adjust position to include the name
-        // }
 
         if (row < 1) {
           // Top row
@@ -286,7 +263,7 @@
       toMainScreenButton.on("pointertap", () => Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 }));
       toMainScreenButton.y = app.view.height - padding - toMainScreenButton.height;
       toMainScreenButton.x = padding;
-      artistCatalog.addChild(toMainScreenButton);
+      container.addChild(toMainScreenButton);
 
       container.interactive = true;
       container.dragging = false;
@@ -328,7 +305,6 @@
         });
         artist.on("pointerup", (e) => {
           if (Date.now() - artist.interactionTimeStamp <= 150) {
-            console.log(views[artist.viewIndex]);
             Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
           }
         });
@@ -343,19 +319,12 @@
 
       // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
       // app.stage.addChild(middleText);
-
-      artistCatalog.addChild(container);
-
-      Director.addScene("catalog", artistCatalog);
       return container;
     }
 
-
-
-
-
-
     function buildArtistPage(artistData) {
+          const horizontalPadding = 50;
+    const verticalPadding = 50;
       const artistProfile = new PIXI.Container();
       artistProfile.name = artistData.name;
       artistProfile.headshotPath = artistData.headshotPath;
@@ -513,7 +482,7 @@
                     scale: {
                       x: 1,
                       y: 1,
-                    },
+                    }
 
                   });
                   await Animate.to(target, {
@@ -633,12 +602,17 @@
     // // Building the main screen
     // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
 
-    // Building some artist pages
+    // Building some artist pages and adding them to the director
     artistData.forEach(artist => buildArtistPage(artist));
 
-    buildArtistCatalog(views);
+    // Creating an artist catalog with a link to each artist profile
+    const artistCatalog = buildArtistCatalog(views);
 
-    buildMainScreen();
+    // Creating the main screen
+    const mainScreen = buildMainScreen(exhibitData);
+    
+    Director.addScene("catalog", artistCatalog);
+    Director.addScene("mainscreen",mainScreen);
     Director.showScene("mainscreen", { transition: Director.fade, duration: 1000 })
   </script>
 </body>
