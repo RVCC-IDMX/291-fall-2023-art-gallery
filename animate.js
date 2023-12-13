@@ -100,6 +100,12 @@ Animate.to = function (obj, end) {
           lerp(start.scale.y, end.scale.y, ease)
         );
 
+      //Lerp our anchor
+      if (end.anchor != undefined)
+        obj.anchor.set(
+          lerp(start.anchor.x, end.anchor.x, ease),
+          lerp(start.anchor.y, end.anchor.y, ease)
+        );
       //Lerp our rotation -- we'll need to clean this up, but later
       if (end.rotation != undefined)
         obj.rotation = lerp(start.rotation, end.rotation, ease);

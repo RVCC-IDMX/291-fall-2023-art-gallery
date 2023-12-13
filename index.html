@@ -472,17 +472,24 @@
                   target.zIndex = 1000;
                   await Animate.to(target, {
                     duration: 500,
+                    x: app.view.width / 2 - target.parent.x,
+                    y: app.view.height / 2 - target.parent.y,
                     scale: {
                       x: 1,
                       y: 1,
-                    }
 
+                    },
+                    anchor: {
+                      x: .5,
+                      y: .5
+                    },
+                    easing: Animate.easeIn
                   });
-                  await Animate.to(target, {
-                    duration: 500,
-                    x: app.view.width / 2 - target.parent.x - target.width / 2,
-                    y: app.view.height / 2 - target.parent.y - target.height / 2,
-                  });
+                  // await Animate.to(target, {
+                  //   duration: 500,
+                  //   x: app.view.width / 2 - target.parent.x - target.width / 2,
+                  //   y: app.view.height / 2 - target.parent.y - target.height / 2
+                  // });
 
 
                   target.enlarged = true;
@@ -496,9 +503,14 @@
                       x: ((250 / sprite.texture.baseTexture.height) * sprite.texture.baseTexture.width) / sprite.width,
                       y: 250 / sprite.height
                     },
+                    anchor: {
+                      x: 0,
+                      y: 0
+                    },
                     x: target.originalX,
                     y: target.originalY,
-                    duration: 250
+                    duration: 250,
+                    easing: Animate.easeOut
                   });
                   target.enlarged = false;
                 }
