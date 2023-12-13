@@ -210,7 +210,9 @@
         itemContainer.addChild(border);
 
         // Create image sprite
+        console.log(PIXI.Cache);
         const image = PIXI.Sprite.from(artistPages[i].headshotPath);
+
         const originalHeight = image.height;
         const originalWidth = image.width;
         image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
@@ -255,7 +257,14 @@
       page.addChild(container);
 
       const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", buttonParams);
-      toMainScreenButton.on("pointertap", () => Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 }));
+      toMainScreenButton.on("pointertap", () => {
+        Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 });
+        // Reset position of catalog after navigating away. Animating in case catalog is still visible during transition for some reason. 
+        Animate.to(container, {
+          duration: 500,
+          x: 0
+        });
+      });
       toMainScreenButton.y = app.view.height - padding - toMainScreenButton.height;
       toMainScreenButton.x = padding;
       page.addChild(toMainScreenButton);
@@ -334,7 +343,7 @@
       async function buildArtistProfile(artist) {
         PIXI.Assets.load(artist.headshotPath)
           .then(async () => {
-            const texture = await PIXI.Assets.load(artist.headshotPath);
+            const texture = await PIXI.Cache.get(artist.headshotPath);
             const artistPhoto = await new PIXI.Sprite(texture);
 
             //Adding rectangles to crop photo to uniform dimensions of 650X450
@@ -437,18 +446,13 @@
       }
 
       async function buildGallery(images) {
-        // // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
-        const imageGalleryPlaceholder = new PIXI.Graphics();
-        imageGallery.addChild(imageGalleryPlaceholder);
-        imageGalleryPlaceholder.beginFill(boxColor);
-        imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
         await PIXI.Assets.load(images)
           .then(() => {
-            imageGallery.children.pop(0);
             // This way to make this work seems pretty cursed, but whatever.
             let count = 0;
             images.forEach(async (path) => {
-              const texture = await PIXI.Assets.load(path);
+              // const texture = await PIXI.Texture.fromURL(path);
+              const texture = await PIXI.Cache.get(path);
               const sprite = await new PIXI.Sprite(texture);
               sprite.height = 250;
               sprite.width =
