@@ -1,7 +1,7 @@
 const exhibitData = {
-  title: 'Exhibit title',
+  title: "Global Perspectives: Art Across Continents",
   description:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    '"Global Perspectives: Art Across Continents" is a vibrant tapestry woven from the diverse threads of creativity found across the globe. This captivating exhibit serves as a testament to the rich cultural mosaic and artistic brilliance stemming from every corner of the world. As visitors step into this immersive showcase, they embark on a visual journey transcending borders, exploring narratives, and celebrating the myriad expressions of human imagination.',
 };
 
 const artistData = [

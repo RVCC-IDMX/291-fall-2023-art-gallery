@@ -63,9 +63,11 @@
       const exhibitName = new PIXI.Text(exhibit.title || "title", {
         fontFamily: 'Arial',
         fontSize: 48,
+        wordWrap: true,
+        wordWrapWidth: 600,
         fill: 0x000000, // Black color
       });
-      exhibitName.position.set(150, 75);
+      exhibitName.position.set(150, 30);
       // Create "Exhibit background / Intro Text" text
       const introText = new PIXI.Text(exhibit.description || "description", {
         fontFamily: 'Arial',
@@ -78,12 +80,12 @@
       introText.position.set(0, 0);
 
       // Create "IMAGE" text
-      const imageText = new PIXI.Text('IMAGE', {
-        fontFamily: 'Arial',
-        fontSize: 24,
-        fill: 0x000000, // Black color
-      });
-      imageText.position.set(0, 0);
+      // const imageText = new PIXI.Text('IMAGE', {
+      //   fontFamily: 'Arial',
+      //   fontSize: 24,
+      //   fill: 0x000000, // Black color
+      // });
+      // imageText.position.set(0, 0);
       // container.addChild(imageText);
 
 
@@ -466,6 +468,7 @@
               sprite.originalScaleY = sprite.scale.y;
               async function enlargeToggle(target) {
                 if (!target.enlarged) {
+                  imageGallery.interactive = false;
                   target.interactive = false;
                   target.originalX = target.x;
                   target.originalY = target.y;
@@ -513,6 +516,8 @@
                     easing: Animate.easeOut
                   });
                   target.enlarged = false;
+                  imageGallery.interactive = true;
+                  imageGallery.dragging = false;
                 }
               }
 
