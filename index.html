@@ -29,6 +29,14 @@
 
     const mainBackgroundColor = 0xffffff;
     const boxColor = 0x555555;
+    const buttonParams = {
+      backgroundColor: 0x000000,
+      textStyle: {
+        fontFamily: 'Arial',
+        fontSize: 20,
+        fill: 0xFFFFFF
+      }
+    };
 
     //The App
     const app = new PIXI.Application({
@@ -45,7 +53,7 @@
     document.body.appendChild(app.view);
 
     // An array to store a varying number of artist pages
-              const views = [];
+    const views = [];
 
     // Alex's Main/Start Screen
     function buildMainScreen(exhibit) {
@@ -116,8 +124,8 @@
       windowRect.x = 100;
       windowRect.y = 100;
       container.addChild(windowRect);
-      windowRect.addChild(rect1)
-      windowRect.addChild(rect2)
+      windowRect.addChild(rect1);
+      windowRect.addChild(rect2);
 
       let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
       windowRect.addChild(placeholder);
@@ -138,7 +146,7 @@
 
       const button = new PIXI.Graphics();
       button.beginFill(0x000000); // Black color
-      button.drawRect(0, 0, 350, 70);
+      button.drawRoundedRect(0, 0, 350, 70, 10);
       button.x = 600;
       button.y = 980;
       button.endFill();
@@ -259,7 +267,7 @@
         container.addChild(itemContainer);
       }
 
-      const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", {});
+      const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", buttonParams);
       toMainScreenButton.on("pointertap", () => Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 }));
       toMainScreenButton.y = app.view.height - padding - toMainScreenButton.height;
       toMainScreenButton.x = padding;
@@ -323,13 +331,13 @@
     }
 
     function buildArtistPage(artistData) {
-          const horizontalPadding = 50;
-    const verticalPadding = 50;
+      const horizontalPadding = 50;
+      const verticalPadding = 50;
       const artistProfile = new PIXI.Container();
       artistProfile.name = artistData.name;
       artistProfile.headshotPath = artistData.headshotPath;
       const imageGallery = new PIXI.Container();
-      const toCatalogButton = new UI.Button(0, 0, "<< Artist Catalog", {});
+      const toCatalogButton = new UI.Button(0, 0, "<< Artist Catalog", buttonParams);
       toCatalogButton.on("pointertap", () => Director.showScene("catalog", { transition: Director.swipe, direction: "up", duration: 1000 }));
       toCatalogButton.y = app.view.height - toCatalogButton.height;
       toCatalogButton.x = horizontalPadding;
@@ -610,9 +618,9 @@
 
     // Creating the main screen
     const mainScreen = buildMainScreen(exhibitData);
-    
+
     Director.addScene("catalog", artistCatalog);
-    Director.addScene("mainscreen",mainScreen);
+    Director.addScene("mainscreen", mainScreen);
     Director.showScene("mainscreen", { transition: Director.fade, duration: 1000 })
   </script>
 </body>
