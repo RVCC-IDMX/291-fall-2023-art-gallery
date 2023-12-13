@@ -45,38 +45,38 @@
     document.body.appendChild(app.view);
 
     // An array to store a varying number of artist pages
-              const views = [];
+    const views = [];
+
+
 
     // Alex's Main/Start Screen
+
     function buildMainScreen(exhibit) {
       const container = new PIXI.Container();
+
       //Text
       // Create "Exhibit Name" text
       const exhibitName = new PIXI.Text(exhibit.title || "title", {
-        fontFamily: 'Arial',
-        fontSize: 48,
+        fontFamily: 'Bebas Neue',
+        fontSize: 92,
         fill: 0x000000, // Black color
       });
-      exhibitName.position.set(150, 75);
+
+      exhibitName.position.set(160, 70);
+
+
       // Create "Exhibit background / Intro Text" text
       const introText = new PIXI.Text(exhibit.description || "description", {
-        fontFamily: 'Arial',
-        fontSize: 24,
+        fontFamily: 'Montserrat',
+        fontSize: 30,
+        lineHeight: 50,
         wordWrap: true,
         wordWrapWidth: 300,
 
         fill: 0x000000, // Black color
       });
-      introText.position.set(0, 0);
 
-      // Create "IMAGE" text
-      const imageText = new PIXI.Text('IMAGE', {
-        fontFamily: 'Arial',
-        fontSize: 24,
-        fill: 0x000000, // Black color
-      });
-      imageText.position.set(0, 0);
-      // container.addChild(imageText);
+      introText.position.set(0, 0);
 
 
 
@@ -84,31 +84,31 @@
 
       // Create first rectangle
       const rect1 = new PIXI.Graphics();
-      rect1.beginFill(0xC0C0C0); // Lighter grey color
+      rect1.beginFill(0xEEEEEE); // Lighter grey color
       rect1.lineStyle(3, 0x000000); // Black outline with 3px width
-      rect1.drawRect(0, 0, 500, 615);
+      rect1.drawRoundedRect(0, 0, 800, 615);
       rect1.x = 150;
       rect1.y = 175;
       rect1.endFill();
       rect1.addChild(introText);
       // introText.wordWrapWidth = introText.parent.width - 30;
-      introText.style.wordWrapWidth = introText.parent.width - 20;
+      introText.style.wordWrapWidth = introText.parent.width - 50;
       introText.x = introText.parent.width / 2 - introText.width / 2;
       introText.y = 20;
 
       const rect2 = new PIXI.Graphics();
       rect2.beginFill(0xC0C0C0); // Lighter grey color
-      rect2.lineStyle(4, 0x000000); // Black outline with 3px width
-      rect2.drawRect(0, 0, 460, 690);
-      rect2.x = 775;
-      rect2.y = 102;
+      rect2.lineStyle(5, 0x000000); // Black outline with 3px width
+      rect2.drawRect(0, 0, 460, 685);
+      rect2.x = 1085;
+      rect2.y = 105;
       rect2.endFill();
 
       // Create "window" rectangle
       const windowRect = new PIXI.Graphics();
       windowRect.beginFill(0xFFFFFF); // Light grey color
       windowRect.lineStyle(7.5, 0x000000); // Black outline with 3px width
-      windowRect.drawRect(0, 0, 1400, 850);
+      windowRect.drawRoundedRect(0, 0, 1710, 850);
       windowRect.endFill();
       windowRect.addChild(rect1);
       windowRect.addChild(rect2);
@@ -119,10 +119,10 @@
       windowRect.addChild(rect1)
       windowRect.addChild(rect2)
 
-      let placeholder = PIXI.Sprite.from("img/placeholder.jpg");
+      let placeholder = PIXI.Sprite.from("img/main-screen-placeholder/placeholder.jpg");
       windowRect.addChild(placeholder);
       placeholder.scale.set(0.12);
-      placeholder.x = 775;
+      placeholder.x = 1085;
       placeholder.y = 105;
 
 
@@ -130,21 +130,21 @@
 
       // Create "To Artist Catalogue" button
 
-      const buttonText = new PIXI.Text('To Artist Catalogue >>>', {
-        fontFamily: 'Arial',
+      const buttonText = new PIXI.Text('Enter Artist Catalogue >>>', {
+        fontFamily: 'Montserrat',
         fontSize: 24,
         fill: 0xFFFFFF,
       });
 
       const button = new PIXI.Graphics();
       button.beginFill(0x000000); // Black color
-      button.drawRect(0, 0, 350, 70);
-      button.x = 600;
+      button.drawRoundedRect(0, 0, 380, 70);
+      button.x = 760;
       button.y = 980;
       button.endFill();
       button.addChild(buttonText);
       // buttonText.x = parent.width / 2 - buttonText.width / 2;
-      buttonText.x = 50;
+      buttonText.x = 30;
       buttonText.y = 20;
 
       container.addChild(button);
@@ -171,7 +171,10 @@
       return container;
     }
 
+
+
     // Sikholiwe's artist catalog
+
     function buildArtistCatalog(artistPages) {
 
       // Container for grid layout
@@ -323,13 +326,13 @@
     }
 
     function buildArtistPage(artistData) {
-          const horizontalPadding = 50;
-    const verticalPadding = 50;
+      const horizontalPadding = 50;
+      const verticalPadding = 50;
       const artistProfile = new PIXI.Container();
       artistProfile.name = artistData.name;
       artistProfile.headshotPath = artistData.headshotPath;
       const imageGallery = new PIXI.Container();
-      const toCatalogButton = new UI.Button(0, 0, "<< Artist Catalog", {});
+      const toCatalogButton = new UI.Button(0, 0, "<<< Artist Catalog", {});
       toCatalogButton.on("pointertap", () => Director.showScene("catalog", { transition: Director.swipe, direction: "up", duration: 1000 }));
       toCatalogButton.y = app.view.height - toCatalogButton.height;
       toCatalogButton.x = horizontalPadding;
@@ -380,18 +383,18 @@
             infoBoxBackground.beginFill(mainBackgroundColor);
             infoBoxBackground.drawRect(0, 0, 1300, 650);
             const artistName = new PIXI.Text(artist.name, {
-              fontFamily: 'sans-serif',
+              fontFamily: 'Montserrat',
               fontWeight: 'bold',
               fontSize: 32,
               fill: 0x000000,
             });
             const artistLocation = new PIXI.Text(artist.location, {
-              fontFamily: 'sans-serif',
+              fontFamily: 'Montserrat',
               fontSize: 26,
               fill: 0x000000,
             });
             const artistMedium = new PIXI.Text(artist.medium, {
-              fontFamily: 'sans-serif',
+              fontFamily: 'Montserrat',
               fontSize: 26,
               fill: 0x000000,
             });
@@ -401,7 +404,7 @@
             artistQRCode.drawRect(0, 0, 300, 300);
 
             const artistDescription = new PIXI.Text(artist.description, {
-              fontFamily: 'sans-serif',
+              fontFamily: 'Montserrat',
               lineHeight: 35,
               wordWrap: true,
               wordWrapWidth: (infoBoxBackground.width * 2) / 3 - infoBoxPadding,
@@ -610,9 +613,9 @@
 
     // Creating the main screen
     const mainScreen = buildMainScreen(exhibitData);
-    
+
     Director.addScene("catalog", artistCatalog);
-    Director.addScene("mainscreen",mainScreen);
+    Director.addScene("mainscreen", mainScreen);
     Director.showScene("mainscreen", { transition: Director.fade, duration: 1000 })
   </script>
 </body>
