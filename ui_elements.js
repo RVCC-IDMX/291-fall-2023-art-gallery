@@ -49,7 +49,7 @@ var UI = {
 
         //Click listener
         ourButton.onclick = function (e) {
-            console.log("Clicked");
+            // console.log("Clicked");
         };
         ourButton.on("click", (e) => ourButton.onclick(e));
 
