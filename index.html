@@ -182,8 +182,11 @@
     // Sikholiwe's artist catalog
     function buildArtistCatalog(artistPages) {
 
+      // The completed page to return
+      const page = new PIXI.Container();
       // Container for grid layout
       const container = new PIXI.Container();
+
 
       // Calculate grid positions
       const gridSize = 4;
@@ -240,7 +243,6 @@
 
         // Add touch events to the entire container
         itemContainer.interactive = true;
-
         // // 1. Event listener for name click
         // itemContainer.on('pointerdown', () => {
         //   goToPage(artistPages[i].name);
@@ -267,11 +269,19 @@
         container.addChild(itemContainer);
       }
 
+      const backgroundBox = new PIXI.Graphics();
+      backgroundBox.beginFill(mainBackgroundColor);
+      backgroundBox.drawRect(0, 0, container.width, container.height);
+      backgroundBox.x = padding;
+      backgroundBox.y = .5 * backgroundBox.height - padding * 2 + 10;
+      container.addChildAt(backgroundBox, 0);
+      page.addChild(container);
+
       const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", buttonParams);
       toMainScreenButton.on("pointertap", () => Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 }));
       toMainScreenButton.y = app.view.height - padding - toMainScreenButton.height;
       toMainScreenButton.x = padding;
-      container.addChild(toMainScreenButton);
+      page.addChild(toMainScreenButton);
 
       container.interactive = true;
       container.dragging = false;
@@ -311,13 +321,18 @@
         artist.on("pointerdown", (e) => {
           artist.interactionTimeStamp = Date.now();
         });
-        artist.on("pointerup", (e) => {
+        artist.on("pointerup", async (e) => {
           if (Date.now() - artist.interactionTimeStamp <= 150) {
-            Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+            await Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+            // Reset position of catalog after navigating away. Animating in case catalog is still visible during transition for some reason. 
+            Animate.to(container, {
+              duration: 500,
+              x: 0
+            });
           }
         });
       });
-      // Draw arrows and text in the middle
+      //      Draw arrows and text in the middle
       // const middleText = new PIXI.Text("Artists names", {
       //   fill: "black",
       //   fontSize: 24,
@@ -326,8 +341,9 @@
       // });
 
       // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
+      // page.addChild(middleText);
       // app.stage.addChild(middleText);
-      return container;
+      return page;
     }
 
     function buildArtistPage(artistData) {
