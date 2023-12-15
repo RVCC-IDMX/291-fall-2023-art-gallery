@@ -123,7 +123,7 @@
       windowRect.addChild(rect1);
       windowRect.addChild(rect2);
       windowRect.addChild(exhibitName);
-      windowRect.x = 100;
+      windowRect.x = app.view.width / 2 - windowRect.width / 2;
       windowRect.y = 100;
       container.addChild(windowRect);
       windowRect.addChild(rect1);
@@ -149,7 +149,7 @@
       const button = new PIXI.Graphics();
       button.beginFill(0x000000); // Black color
       button.drawRoundedRect(0, 0, 350, 70, 10);
-      button.x = 600;
+      button.x = app.view.width / 2 - button.width / 2;
       button.y = 980;
       button.endFill();
       button.addChild(buttonText);
