@@ -401,9 +401,10 @@
               fill: 0x000000,
             });
 
-            const artistQRCode = new PIXI.Graphics();
-            artistQRCode.beginFill(0x000000);
-            artistQRCode.drawRect(0, 0, 300, 300);
+            const artistQRCode = PIXI.Sprite.from('./img/qrcode.png');
+            // const artistQRCode = new PIXI.Graphics();
+            // artistQRCode.beginFill(0x000000);
+            // artistQRCode.drawRect(0, 0, 300, 300);
 
             const artistDescription = new PIXI.Text(artist.description, {
               fontFamily: 'sans-serif',
@@ -432,7 +433,7 @@
             artistMedium.x = infoBoxPadding;
             artistMedium.y =
               artistLocation.y + artistMedium.height + infoBoxElementSpacing;
-            artistQRCode.x = infoBoxPadding;
+            artistQRCode.x = 15;
             artistQRCode.y =
               artistMedium.y + artistMedium.height + 2 * infoBoxElementSpacing;
             artistDescription.x = infoBoxBackground.width / 3 - infoBoxPadding;
