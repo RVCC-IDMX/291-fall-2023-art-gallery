@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
   <!-- <script type="text/javascript" src="./artists.json"></script> -->
   <script src="./data.js"></script>
@@ -32,7 +35,7 @@
     const buttonParams = {
       backgroundColor: 0x000000,
       textStyle: {
-        fontFamily: 'Arial',
+        fontFamily: 'Montserrat',
         fontSize: 20,
         fill: 0xFFFFFF
       }
@@ -207,7 +210,6 @@
         itemContainer.addChild(border);
 
         // Create image sprite
-        console.log(PIXI.Cache);
         const image = PIXI.Sprite.from(artistPages[i].headshotPath);
 
         const originalHeight = image.height;
@@ -336,7 +338,13 @@
       artistProfile.name = artistData.name;
       artistProfile.headshotPath = artistData.headshotPath;
       const imageGallery = new PIXI.Container();
-      const toCatalogButton = new UI.Button(0, 0, "<<< Artist Catalog", {});
+      const toCatalogButton = new UI.Button(0, 0, "<<< Artist Catalog", {
+        backgroundColor: 0x000000,
+        textStyle:{
+        fill: 0xFFFFFF
+        }
+
+      });
       toCatalogButton.on("pointertap", () => Director.showScene("catalog", { transition: Director.swipe, direction: "up", duration: 1000 }));
       toCatalogButton.y = app.view.height - toCatalogButton.height;
       toCatalogButton.x = horizontalPadding;
@@ -495,11 +503,6 @@
                     },
                     easing: Animate.easeIn
                   });
-                  // await Animate.to(target, {
-                  //   duration: 500,
-                  //   x: app.view.width / 2 - target.parent.x - target.width / 2,
-                  //   y: app.view.height / 2 - target.parent.y - target.height / 2
-                  // });
 
 
                   target.enlarged = true;
@@ -606,8 +609,7 @@
       imageGallery.on('pointerupoutside', (e) => {
         imageGallery.dragging = false;
       });
-      // Add a nav button for returning to the catalog screen
-      const toCatalogButton = new UI.Button(0, 0, "<< Artist Catalog", buttonParams);
+
       toCatalogButton.on("pointertap", async () => {
         await Director.showScene("catalog", { transition: Director.swipe, direction: "up", duration: 1000 });
         // Reset image gallery position on navigating away

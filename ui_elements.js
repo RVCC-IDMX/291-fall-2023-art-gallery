@@ -1,84 +1,77 @@
 var UI = {
+  Button: function (x, y, text, params) {
+    //
+    //Default Parameters
+    //
 
-    Button: function (x, y, text, params) {
+    if (params == undefined) {
+      params = {};
+    }
+    if (params.backgroundColor == undefined) params.backgroundColor = 0xeeeeee;
+    if (params.textStyle == undefined) {
+      params.textStyle = {
+        fontFamily: 'Montserrat',
+        fontSize: 24,
+        fill: 0x000000,
+      };
+    }
 
-        //
-        //Default Parameters
-        //
+    //
+    //Display Elements
+    //
 
-        if (params == undefined) {
-            params = {};
-        }
-        if (params.backgroundColor == undefined)
-            params.backgroundColor = 0xEEEEEE;
-        if (params.textStyle == undefined) {
-            params.textStyle = {
-                fontFamily: 'Arial',
-                fontSize: 24,
-                fill: 0x000000
-            };
-        }
+    var ourButton = new PIXI.Container();
+    ourButton.interactive = true;
+    ourButton.x = x;
+    ourButton.y = y;
 
-        //
-        //Display Elements
-        //
+    var buttonBody = new PIXI.Graphics();
+    buttonBody.beginFill(params.backgroundColor);
+    buttonBody.drawRoundedRect(0, 0, 250, 60, 10);
+    ourButton.addChild(buttonBody);
 
-        var ourButton = new PIXI.Container();
-        ourButton.interactive = true;
-        ourButton.x = x;
-        ourButton.y = y;
+    ourButton.body = buttonBody;
 
-        var buttonBody = new PIXI.Graphics();
-        buttonBody.beginFill(params.backgroundColor);
-        buttonBody.drawRoundedRect(0, 0, 200, 60, 10);
-        ourButton.addChild(buttonBody);
+    var buttonText = new PIXI.Text(text, params.textStyle);
+    buttonText.anchor.set(0.5, 0.5);
+    buttonText.x = buttonBody.width / 2;
+    buttonText.y = buttonBody.height / 2;
+    ourButton.addChild(buttonText);
 
-        ourButton.body = buttonBody;
+    ourButton.label = buttonText;
 
-        var buttonText = new PIXI.Text(text, params.textStyle);
-        buttonText.anchor.set(.5, .5);
-        buttonText.x = buttonBody.width / 2;
-        buttonText.y = buttonBody.height / 2;
-        ourButton.addChild(buttonText);
+    //
+    //Event Listeners
+    //
 
-        ourButton.label = buttonText;
+    //Click listener
+    ourButton.onclick = function (e) {
+      // console.log("Clicked");
+    };
+    ourButton.on('click', (e) => ourButton.onclick(e));
 
-        //
-        //Event Listeners
-        //
+    //Pointer down and up
+    ourButton.pointerdown = function (e) {
+      ourButton.alpha = 0.7;
+    };
+    ourButton.on('pointerover', (e) => ourButton.pointerdown(e));
 
-        //Click listener
-        ourButton.onclick = function (e) {
-            // console.log("Clicked");
-        };
-        ourButton.on("click", (e) => ourButton.onclick(e));
+    ourButton.pointerup = function (e) {
+      ourButton.alpha = 1.0;
+    };
+    ourButton.on('pointerout', (e) => ourButton.pointerup(e));
 
-        //Pointer down and up
-        ourButton.pointerdown = function (e) {
-            ourButton.alpha = 0.7;
-        };
-        ourButton.on("pointerover", (e) => ourButton.pointerdown(e));
+    //Hover listeners
+    ourButton.pointerover = function (e) {
+      ourButton.alpha = 0.9;
+    };
+    ourButton.on('pointerover', (e) => ourButton.pointerover(e));
 
-        ourButton.pointerup = function (e) {
-            ourButton.alpha = 1.0;
-        };
-        ourButton.on("pointerout", (e) => ourButton.pointerup(e));
+    ourButton.pointerout = function (e) {
+      ourButton.alpha = 1.0;
+    };
+    ourButton.on('pointerout', (e) => ourButton.pointerout(e));
 
-        //Hover listeners
-        ourButton.pointerover = function (e) {
-            ourButton.alpha = 0.9;
-        };
-        ourButton.on("pointerover", (e) => ourButton.pointerover(e));
-
-        ourButton.pointerout = function (e) {
-            ourButton.alpha = 1.0;
-        };
-        ourButton.on("pointerout", (e) => ourButton.pointerout(e));
-
-        return ourButton;
-
-    },
-
-
-
+    return ourButton;
+  },
 };
