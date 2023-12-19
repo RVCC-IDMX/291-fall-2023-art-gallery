@@ -1,7 +1,8 @@
 const exhibitData = {
-  title: "Global Perspectives: Art Across Continents",
+
+  title: '2023 Art Gallery Project',
   description:
-    '"Global Perspectives: Art Across Continents" is a vibrant tapestry woven from the diverse threads of creativity found across the globe. This captivating exhibit serves as a testament to the rich cultural mosaic and artistic brilliance stemming from every corner of the world. As visitors step into this immersive showcase, they embark on a visual journey transcending borders, exploring narratives, and celebrating the myriad expressions of human imagination.',
+    'This art gallery was created by Alex O Neill, Eric Brown, and Sikholiwe Sibisi. It is a final project for the IDMX-291 course at Raritan Valley community college and is purely designed to showcase knowledge of designing interactive user interfaces using the PIXI.js JavaScript library. All artwork is royalty free and all artist profiles are fictional. Any resemblance to real life people is purely coincidental. Enjoy!',
 };
 
 const artistData = [
