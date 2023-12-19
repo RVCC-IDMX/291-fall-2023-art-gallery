@@ -1,4 +1,5 @@
 const exhibitData = {
+
   title: '2023 Art Gallery Project',
   description:
     'This art gallery was created by Alex O Neill, Eric Brown, and Sikholiwe Sibisi. It is a final project for the IDMX-291 course at Raritan Valley community college and is purely designed to showcase knowledge of designing interactive user interfaces using the PIXI.js JavaScript library. All artwork is royalty free and all artist profiles are fictional. Any resemblance to real life people is purely coincidental. Enjoy!',

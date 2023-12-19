@@ -25,6 +25,7 @@ Animate.bindAnimation = function (animation, target) {
 
 //Animate to
 Animate.to = function (obj, end) {
+
   //Make it a promise:
   return new Promise((resolve, reject) => {
     //Set up initial state parameters
@@ -41,11 +42,19 @@ Animate.to = function (obj, end) {
       tint: obj.tint,
       alpha: obj.alpha,
     };
-
     //Set some defaults
     if (end.duration == undefined) end.duration = 0;
     if (end.easing == undefined) end.easing = Animate.linear;
-
+    if (obj.isSprite) {
+      start.anchor = {
+        x: obj.anchor.x,
+        y: obj.anchor.y
+      };
+      if (end.anchor == undefined) end.anchor = {
+        x: obj.anchor.x,
+        y: obj.anchor.y
+      };
+    }
     //We need to know when we've started animating
     var startTime = Date.now();
 
@@ -91,6 +100,12 @@ Animate.to = function (obj, end) {
           lerp(start.scale.y, end.scale.y, ease)
         );
 
+      //Lerp our anchor
+      if (end.anchor != undefined)
+        obj.anchor.set(
+          lerp(start.anchor.x, end.anchor.x, ease),
+          lerp(start.anchor.y, end.anchor.y, ease)
+        );
       //Lerp our rotation -- we'll need to clean this up, but later
       if (end.rotation != undefined)
         obj.rotation = lerp(start.rotation, end.rotation, ease);

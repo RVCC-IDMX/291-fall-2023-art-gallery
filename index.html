@@ -29,12 +29,20 @@
 
     const mainBackgroundColor = 0xffffff;
     const boxColor = 0x555555;
+    const buttonParams = {
+      backgroundColor: 0x000000,
+      textStyle: {
+        fontFamily: 'Arial',
+        fontSize: 20,
+        fill: 0xFFFFFF
+      }
+    };
 
     //The App
     const app = new PIXI.Application({
       width: 1920,
       height: 1080,
-      backgroundColor: 0xffffff,
+      backgroundColor: mainBackgroundColor,
       /*resolution:2,
       autoDensity:true*/
     });
@@ -46,8 +54,8 @@
 
     // An array to store a varying number of artist pages
     const views = [];
-
-
+    
+    
 
     // Alex's Main/Start Screen
 
@@ -61,9 +69,7 @@
         fontSize: 92,
         fill: 0x000000, // Black color
       });
-
       exhibitName.position.set(160, 70);
-
 
       // Create "Exhibit background / Intro Text" text
       const introText = new PIXI.Text(exhibit.description || "description", {
@@ -77,8 +83,6 @@
       });
 
       introText.position.set(0, 0);
-
-
 
       // Rectangles
 
@@ -113,11 +117,11 @@
       windowRect.addChild(rect1);
       windowRect.addChild(rect2);
       windowRect.addChild(exhibitName);
-      windowRect.x = 100;
+      windowRect.x = app.view.width / 2 - windowRect.width / 2;
       windowRect.y = 100;
       container.addChild(windowRect);
-      windowRect.addChild(rect1)
-      windowRect.addChild(rect2)
+      windowRect.addChild(rect1);
+      windowRect.addChild(rect2);
 
       let placeholder = PIXI.Sprite.from("img/main-screen-placeholder/placeholder.jpg");
       windowRect.addChild(placeholder);
@@ -149,8 +153,6 @@
 
       container.addChild(button);
 
-
-
       // Add hover effect to the button
       button.interactive = true;
       button.buttonMode = true;
@@ -177,8 +179,11 @@
 
     function buildArtistCatalog(artistPages) {
 
+      // The completed page to return
+      const page = new PIXI.Container();
       // Container for grid layout
       const container = new PIXI.Container();
+
 
       // Calculate grid positions
       const gridSize = 4;
@@ -202,13 +207,13 @@
         itemContainer.addChild(border);
 
         // Create image sprite
+        console.log(PIXI.Cache);
         const image = PIXI.Sprite.from(artistPages[i].headshotPath);
+
         const originalHeight = image.height;
         const originalWidth = image.width;
         image.width = imageSize / 2 - 5; // Adjust the scale factor and border size
         image.height = imageSize / 2 - 30; // Adjust the height to fit the name
-        // image.height = imageSize;
-        // image.width = originalWidth * imageSize/originalHeight
         image.position.set(2, 2); // Adjust position to fit within the border
         itemContainer.addChild(image);
 
@@ -236,37 +241,30 @@
         // Add touch events to the entire container
         itemContainer.interactive = true;
 
-        // // 1. Event listener for name click
-        // itemContainer.on('pointerdown', () => {
-        //   goToPage(artistPages[i].name);
-        // });
-
-        // 2. Event listeners for left and right arrows
-        if (artistPages[i].name === "Artists names") {
-          leftArrow.on('pointerdown', () => {
-            console.log("Left arrow clicked!");
-            // Implement left arrow logic here
-          });
-
-          rightArrow.on('pointerdown', () => {
-            console.log("Right arrow clicked!");
-            // Implement right arrow logic here
-          });
-
-          // 3. Event listener for "Back to main screen" click
-          backText.on('pointerdown', () => {
-            goToPage("Main Screen");
-          });
-        }
-
         container.addChild(itemContainer);
       }
 
-      const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", {});
-      toMainScreenButton.on("pointertap", () => Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 }));
+      //add a background box to allow for dragging when touching empty space between artist profiles. 
+      const backgroundBox = new PIXI.Graphics();
+      backgroundBox.beginFill(mainBackgroundColor);
+      backgroundBox.drawRect(0, 0, container.width, container.height);
+      backgroundBox.x = padding;
+      backgroundBox.y = .5 * backgroundBox.height - padding * 2 + 10;
+      container.addChildAt(backgroundBox, 0);
+      page.addChild(container);
+
+      const toMainScreenButton = new UI.Button(0, 0, "<< Welcome", buttonParams);
+      toMainScreenButton.on("pointertap", () => {
+        Director.showScene("mainscreen", { transition: Director.swipe, direction: "right", duration: 1000 });
+        // Reset position of catalog after navigating away. Animating in case catalog is still visible during transition for some reason. 
+        Animate.to(container, {
+          duration: 500,
+          x: 0
+        });
+      });
       toMainScreenButton.y = app.view.height - padding - toMainScreenButton.height;
       toMainScreenButton.x = padding;
-      container.addChild(toMainScreenButton);
+      page.addChild(toMainScreenButton);
 
       container.interactive = true;
       container.dragging = false;
@@ -306,13 +304,18 @@
         artist.on("pointerdown", (e) => {
           artist.interactionTimeStamp = Date.now();
         });
-        artist.on("pointerup", (e) => {
+        artist.on("pointerup", async (e) => {
           if (Date.now() - artist.interactionTimeStamp <= 150) {
-            Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+            await Director.showScene(`${artist.viewIndex}`, { transition: Director.swipe, direction: "down", duration: 1000 });
+            // Reset position of catalog after navigating away. Animating in case catalog is still visible during transition for some reason. 
+            Animate.to(container, {
+              duration: 500,
+              x: 0
+            });
           }
         });
       });
-      // Draw arrows and text in the middle
+      //      Draw arrows and text in the middle
       // const middleText = new PIXI.Text("Artists names", {
       //   fill: "black",
       //   fontSize: 24,
@@ -321,8 +324,9 @@
       // });
 
       // middleText.position.set(app.screen.width / 2 - middleText.width / 1, app.screen.height / 2.8 - middleText.height / 20);
+      // page.addChild(middleText);
       // app.stage.addChild(middleText);
-      return container;
+      return page;
     }
 
     function buildArtistPage(artistData) {
@@ -341,7 +345,7 @@
       async function buildArtistProfile(artist) {
         PIXI.Assets.load(artist.headshotPath)
           .then(async () => {
-            const texture = await PIXI.Assets.load(artist.headshotPath);
+            const texture = await PIXI.Cache.get(artist.headshotPath);
             const artistPhoto = await new PIXI.Sprite(texture);
 
             //Adding rectangles to crop photo to uniform dimensions of 650X450
@@ -399,9 +403,10 @@
               fill: 0x000000,
             });
 
-            const artistQRCode = new PIXI.Graphics();
-            artistQRCode.beginFill(0x000000);
-            artistQRCode.drawRect(0, 0, 300, 300);
+            const artistQRCode = PIXI.Sprite.from('./img/qrcode.png');
+            // const artistQRCode = new PIXI.Graphics();
+            // artistQRCode.beginFill(0x000000);
+            // artistQRCode.drawRect(0, 0, 300, 300);
 
             const artistDescription = new PIXI.Text(artist.description, {
               fontFamily: 'Montserrat',
@@ -430,7 +435,7 @@
             artistMedium.x = infoBoxPadding;
             artistMedium.y =
               artistLocation.y + artistMedium.height + infoBoxElementSpacing;
-            artistQRCode.x = infoBoxPadding;
+            artistQRCode.x = 15;
             artistQRCode.y =
               artistMedium.y + artistMedium.height + 2 * infoBoxElementSpacing;
             artistDescription.x = infoBoxBackground.width / 3 - infoBoxPadding;
@@ -444,18 +449,13 @@
       }
 
       async function buildGallery(images) {
-        // // Placeholder to allocate space while the images load, since we can't just do things in a set order apparently.
-        const imageGalleryPlaceholder = new PIXI.Graphics();
-        imageGallery.addChild(imageGalleryPlaceholder);
-        imageGalleryPlaceholder.beginFill(boxColor);
-        imageGalleryPlaceholder.drawRect(0, 0, 150, 250);
         await PIXI.Assets.load(images)
           .then(() => {
-            imageGallery.children.pop(0);
             // This way to make this work seems pretty cursed, but whatever.
             let count = 0;
             images.forEach(async (path) => {
-              const texture = await PIXI.Assets.load(path);
+              // const texture = await PIXI.Texture.fromURL(path);
+              const texture = await PIXI.Cache.get(path);
               const sprite = await new PIXI.Sprite(texture);
               sprite.height = 250;
               sprite.width =
@@ -464,8 +464,7 @@
               if (count != 0) {
                 sprite.x =
                   imageGallery.children[count - 1].x +
-                  imageGallery.children[count - 1].width +
-                  50;
+                  imageGallery.children[count - 1].width + 50;
               } else {
                 sprite.x = 0;
               }
@@ -476,23 +475,31 @@
               sprite.originalScaleY = sprite.scale.y;
               async function enlargeToggle(target) {
                 if (!target.enlarged) {
+                  imageGallery.interactive = false;
                   target.interactive = false;
                   target.originalX = target.x;
                   target.originalY = target.y;
                   target.zIndex = 1000;
                   await Animate.to(target, {
                     duration: 500,
+                    x: app.view.width / 2 - target.parent.x,
+                    y: app.view.height / 2 - target.parent.y,
                     scale: {
                       x: 1,
                       y: 1,
-                    }
 
+                    },
+                    anchor: {
+                      x: .5,
+                      y: .5
+                    },
+                    easing: Animate.easeIn
                   });
-                  await Animate.to(target, {
-                    duration: 500,
-                    x: app.view.width / 2 - target.parent.x - target.width / 2,
-                    y: app.view.height / 2 - target.parent.y - target.height / 2,
-                  });
+                  // await Animate.to(target, {
+                  //   duration: 500,
+                  //   x: app.view.width / 2 - target.parent.x - target.width / 2,
+                  //   y: app.view.height / 2 - target.parent.y - target.height / 2
+                  // });
 
 
                   target.enlarged = true;
@@ -506,11 +513,18 @@
                       x: ((250 / sprite.texture.baseTexture.height) * sprite.texture.baseTexture.width) / sprite.width,
                       y: 250 / sprite.height
                     },
+                    anchor: {
+                      x: 0,
+                      y: 0
+                    },
                     x: target.originalX,
                     y: target.originalY,
-                    duration: 250
+                    duration: 250,
+                    easing: Animate.easeOut
                   });
                   target.enlarged = false;
+                  imageGallery.interactive = true;
+                  imageGallery.dragging = false;
                 }
               }
 
@@ -520,7 +534,6 @@
                 sprite.interactionTimeStamp = Date.now();
               });
               sprite.on("pointerup", (e) => {
-                console.log(Date.now() - sprite.interactionTimeStamp);
                 if (Date.now() - sprite.interactionTimeStamp < 150) { // Adding a minimum interval between pointer up and down to distinguish between dragging and tapping.
                   sprite.parent.children.forEach(child => {
 
@@ -533,23 +546,25 @@
                   });
                   enlargeToggle(sprite);
                 }
-
-
               });
               count += 1;
             });
+
           })
-          .then(() => {
+          .then(async () => {
             imageGallery.children.forEach(child => child.enlarged = false);
             artistProfile.addChild(imageGallery);
-            // artistProfile.addChild(carouselMaskLeft);
-            // artistProfile.addChild(carouselMaskRight);
           });
       }
-      buildGallery(artistData.galleryImages);
-      buildArtistProfile(
-        artistData
-      );
+      buildArtistProfile(artistData).then(async () => await buildGallery(artistData.galleryImages)).then(() => {
+        imageGalleryBackground = new PIXI.Graphics();
+        imageGalleryBackground.beginFill(mainBackgroundColor);
+        imageGalleryBackground.drawRect(0, 0, imageGallery.width, imageGallery.height);
+        imageGallery.addChildAt(imageGalleryBackground, 0);
+        imageGallery.y -= imageGallery.height;
+      });
+
+
 
       // Anchoring to the bottom left of the screen with extra padding to allow for a back button
       imageGallery.x = horizontalPadding + 200;
@@ -591,9 +606,19 @@
       imageGallery.on('pointerupoutside', (e) => {
         imageGallery.dragging = false;
       });
-
       // Add a nav button for returning to the catalog screen
-
+      const toCatalogButton = new UI.Button(0, 0, "<< Artist Catalog", buttonParams);
+      toCatalogButton.on("pointertap", async () => {
+        await Director.showScene("catalog", { transition: Director.swipe, direction: "up", duration: 1000 });
+        // Reset image gallery position on navigating away
+        await Animate.to(imageGallery, {
+          duration: 500,
+          x: horizontalPadding + 200
+        });
+      });
+      toCatalogButton.y = app.view.height - toCatalogButton.height;
+      toCatalogButton.x = horizontalPadding;
+      artistProfile.addChild(toCatalogButton);
 
       views.push(artistProfile);
 
@@ -601,9 +626,6 @@
       artistProfile.viewIndex = views.length - 1;
       Director.addScene(artistProfile.viewIndex, artistProfile);
     }
-
-    // // Building the main screen
-    // buildMainScreen("Sample Exhibit", "This is where I'd put a description, if I had one!");
 
     // Building some artist pages and adding them to the director
     artistData.forEach(artist => buildArtistPage(artist));

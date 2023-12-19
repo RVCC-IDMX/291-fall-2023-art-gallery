@@ -116,8 +116,8 @@ var Director = {
         }
 
         //Set up next scene
-        nextScene.x = nextSceneStartX;
-        nextScene.y = nextSceneStartY;
+        nextScene.x = nextSceneStartX || 0;
+        nextScene.y = nextSceneStartY || 0;
         app.stage.addChild(nextScene);
         //Slide out current scene as it moves off
         Animate.to(currentScene, {
